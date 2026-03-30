@@ -1,3 +1,4 @@
 *.o
 *.iso
 logs/*.log
+isodir/boot/kernel
