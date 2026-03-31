@@ -6,17 +6,16 @@ static uint32_t pageFrameMin;
 static uint32_t pageFrameMax;
 static uint32_t totalAlloc;
 
-uint8_t psysicalmemoryBitmap[NUM_PAGE_FRAMES / 8];
+uint8_t psysicalMemoryBitmap[NUM_PAGE_FRAMES / 8];
 
-static uint32_t pageDirs[NUM_PAGE_DIRS][1024]__attribute__((aligned(1024)));
-static uint8_t pageDirsUsed[NUM_PAGE_DIRS];
+static uint32_t kernelPageTables[NUM_KERNEL_PAGE_TABLES][1024]__attribute__((aligned(4096)));
 
 void init_PMM(uint32_t mem_low, uint32_t mem_high){
     pageFrameMin = CEIL_DIV(mem_low, 0x1000);
     pageFrameMax = CEIL_DIV(mem_high, 0x1000);
     totalAlloc = 0;
 
-    memset(psysicalmemoryBitmap, 0, sizeof(psysicalmemoryBitmap));
+    memset(psysicalMemoryBitmap, 0, sizeof(psysicalMemoryBitmap));
 }
 
 void init_Memory(uint32_t mem_high, uint32_t psysicalAllocStart){
@@ -26,6 +25,5 @@ void init_Memory(uint32_t mem_high, uint32_t psysicalAllocStart){
     invalidate(0xFFFFF000);
 
     init_PMM(psysicalAllocStart, mem_high);
-    memset(pageDirs, 0, 0x1000 * NUM_PAGE_DIRS);
-    memset(pageDirsUsed, 0, NUM_PAGE_DIRS);
+    memset(kernelPageTables, 0, 0x1000 * NUM_KERNEL_PAGE_TABLES);
 }

@@ -14,7 +14,7 @@ void kernel_main(uint32_t magic, unsigned int physBootInfoAddr){
     init_PIT(10);
     init_Keyboard();
 
-    struct multiboot_info *bootInfo = (struct multiboot_info *)((physAddr) + KERNEL_START);
+    struct multiboot_info *bootInfo = (struct multiboot_info *)((physBootInfoAddr) + KERNEL_START);
 
     uint32_t mod1 = *(uint32_t*)(bootInfo->mods_addr + 4);
     uint32_t psysicalAllocStart = (mod1 + 0xFFF) & ~0XFFF;
