@@ -170,6 +170,18 @@ void term_print(const char* format, ...){
                 term_put_number(x, 16);
                 break;
             }
+            case 'l':
+                if (*(p+1) == 'l' && *(p+2) == 'x') {
+                    p += 2;
+                    uint64_t val = va_arg(args, uint64_t);
+                    uint32_t high = (uint32_t)(val >> 32);
+                    uint32_t low = (uint32_t)val;
+                    if (high > 0) {
+                        term_put_number(high, 16);
+                    }
+                    term_put_number(low, 16);
+                }
+                break;
             case 'p':
                 term_print("0x");
                 term_put_number(va_arg(args, uint32_t), 16);
