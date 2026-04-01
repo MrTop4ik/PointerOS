@@ -30,7 +30,7 @@ You need a cross-compiler `i686-elf-gcc`, `nasm`, and `qemu`.
 ### Build & Run
 ```bash
 # Clone the repository
-git clone https://github.com/MrTop4ik/AreaOS/
+git clone https://github.com/MrTop4ik/PointerOS/
 cd AreaOS
 
 # Compile and create ISO image
