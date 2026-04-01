@@ -1,4 +1,10 @@
 # PointerOS: A 32-bit x86 Hobby Kernel
+
+> [!IMPORTANT]
+> **Legacy Branch.** This branch contains the 32-bit version of PointerOS.
+> Development on this architecture has been discontinued.
+> The current 64-bit (x86_64) version can be found in the `main` branch.
+
 A hobby operating system kernel written from scratch in **C** and **x86 Assembly**.
 
 ---
