@@ -16,7 +16,7 @@ Already Implemented:
 - [x] **GDT:** Global Descriptor Table configured.
 - [x] **Paging:** 64-bit Paging Enabled.
 - [ ] **Drivers:** 
-    - **VGA** In Progress. 
+    - **VGA (or smth better if there is)** In Progress. 
 - [ ] **Higher Half Kernel:** In Progress.
 
 ## Getting Started
