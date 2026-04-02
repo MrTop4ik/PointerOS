@@ -27,6 +27,8 @@ stack_top:
 stack_bottom:
 
 section .rodata
+msg_no_cpuid: db "ERROR: CPUID NOT SUPPORTED", 0
+msg_no_long_mode: db "ERROR: LONG MODE (X64) NOT SUPPORTED", 0
 
 gdt64:
     dq 0
@@ -40,12 +42,74 @@ gdt64:
 
 section .text
 bits 32
+print_string_32:
+    mov edi, 0xB8000
+    mov ah, 0x0F
+.loop:
+    lodsb
+    test al, al
+    jz .done
+    stosw
+    jmp .loop
+.done:
+    ret
+
+check_cpuid:
+    pushfd
+    pop eax
+    mov ecx, eax
+    xor eax, 1 << 21
+    push eax
+    popfd
+    pushfd
+    pop eax
+    push ecx
+    popfd
+    xor eax, ecx
+    jz .no_cpuid
+    ret
+.no_cpuid:
+    push esi
+    push edi
+
+    mov esi, msg_no_cpuid
+    call print_string_32
+
+    pop esi
+    pop edi
+    hlt
+
+check_long_mode:
+    mov eax, 0x80000000
+    cpuid
+    cmp eax, 0x80000001
+    jb .no_long_mode
+
+    mov eax, 0x80000001
+    cpuid
+    test edx, 1 << 29
+    jz .no_long_mode
+    ret
+.no_long_mode:
+    push esi
+    push edi
+    
+    mov esi, msg_no_long_mode
+    call print_string_32
+
+    pop esi
+    pop edi
+    hlt
+
 global _start
 _start:
     mov esp, stack_top
 
     mov edi, eax
     mov esi, ebx
+
+    call check_cpuid
+    call check_long_mode
 
     mov edi, pml4
     xor eax, eax
