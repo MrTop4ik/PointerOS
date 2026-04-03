@@ -11,7 +11,7 @@
     global isr%1
     isr%1:
         push long %1
-        jmp irq_stub
+        jmp isr_stub
 %endmacro
 
 %macro IRQ 2
