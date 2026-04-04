@@ -13,10 +13,12 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 
 ## Current Features
 Already Implemented:
-- [x] **GDT:** Global Descriptor Table configured.
+- [x] **GDT:** Early Global Descriptor Table configured (without tss).
+- [x] **IDT** Interrupt Descriptor Table configured (without ist).
 - [x] **Paging:** 64-bit Paging Enabled.
 - [ ] **Drivers:** 
     - **VGA (or smth better if there is)** In Progress. 
+    - **PIT** Implemented.
 - [ ] **Higher Half Kernel:** In Progress.
 
 ## Getting Started

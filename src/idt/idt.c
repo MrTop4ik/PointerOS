@@ -1,0 +1,134 @@
+#include "idt.h"
+
+extern void* isr_stub_table[];
+extern void* irq_stub_table[];
+
+char *exceptions[] = {
+    "Division By Zero.",
+    "Debug.",
+    "Non Maskable Interrupt.",
+    "Breakpoint.",
+    "Into Detected Overflow.",
+    "Out Of Bounds.",
+    "Invalid Opcode.",
+    "No Coprocessor.",
+    "Double Fault.",
+    "Coprocessor Segment Overrun.",
+    "Bad TSS.",
+    "Segment not present.",
+    "Stack fault.",
+    "General Protection Fault.",
+    "Page Fault.",
+    "Unknown Interrupt.",
+    "Coprocessor Fault.",
+    "Aligment Fault.",
+    "Machine Check.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+    "Reserved.",
+};
+
+void* irq_handlers[16] = {
+    0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0
+};
+
+struct idt_entry_struct idt_entries[256];
+struct idt_ptr_struct idt_ptr;
+
+void remap_PIC(void){
+    outb(0x20, 0x11);
+    outb(0xA0, 0x11);
+
+    outb(0x21, 0x20);
+    outb(0xA1, 0x28);
+    
+    outb(0x21, 0x04);
+    outb(0xA1, 0x02);
+
+    outb(0x21, 0x01);
+    outb(0xA1, 0x01);
+
+    outb(0x21, 0xFC);
+    outb(0xA1, 0xFF);
+}
+
+void init_IDT(void){
+    idt_ptr.limit = (uint16_t)(sizeof(struct idt_entry_struct) * 256) - 1;
+    idt_ptr.base = (uint64_t)&idt_entries;
+
+    remap_PIC();
+
+    for (uint16_t i = 0; i < 256; i++){
+        setIDTGate(i, 0, 0);
+    }
+
+    for (uint8_t vector = 0; vector < 32; vector++){
+        setIDTGate(vector, (uint64_t)isr_stub_table[vector], 0x8E);
+    }
+
+    for (uint8_t vector = 32; vector < 48; vector++){
+        setIDTGate(vector, (uint64_t)irq_stub_table[vector - 32], 0x8E);
+    }
+
+    __asm__ volatile ("lidt %0" : : "m" (idt_ptr));
+    sti();
+}
+
+void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags){
+    idt_entries[vector].offset_1 = (uint16_t)((uint64_t)handler & 0xFFFF);
+    idt_entries[vector].selector = 0x08;
+    idt_entries[vector].ist = 0;
+    idt_entries[vector].flags = flags;
+    idt_entries[vector].offset_2 = (uint16_t)(((uint64_t)handler >> 16) & 0xFFFF);
+    idt_entries[vector].offset_3 = (uint32_t)(((uint64_t)handler >> 32) & 0xFFFFFFFF);
+    idt_entries[vector].reserved = 0;
+}
+
+void exception_handler(struct InterruptRegisters *regs){
+    if (regs->int_no < 32){
+        isr_handler(regs);
+    }
+
+    if (regs->int_no > 31 && regs->int_no < 48){
+        irq_handler(regs);
+    }
+}
+
+void isr_handler(struct InterruptRegisters *regs){
+    if (regs->int_no < 32){
+        serial_print("ISR occured.\n");
+        for (;;);
+    }
+}
+
+void setIRQHandler(uint8_t num, void (*handler)(struct InterruptRegisters *regs)){
+    irq_handlers[num] = handler;
+}
+
+void deleteIRQHandler(uint8_t num){
+    irq_handlers[num] = 0;
+}
+
+void irq_handler(struct InterruptRegisters *regs){
+    void (*handler)(struct InterruptRegisters *regs);
+
+    handler = irq_handlers[regs->int_no - 32];
+
+    handler(regs);
+
+    if (regs->int_no >= 40){
+        outb(0xA0, 0x20);
+    }
+    outb(0x20, 0x20);
+}
