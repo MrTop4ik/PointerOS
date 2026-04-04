@@ -70,13 +70,11 @@ check_cpuid:
     ret
 .no_cpuid:
     push esi
-    push edi
 
     mov esi, msg_no_cpuid
     call print_string_32
 
     pop esi
-    pop edi
     hlt
 
 check_long_mode:
@@ -92,20 +90,18 @@ check_long_mode:
     ret
 .no_long_mode:
     push esi
-    push edi
     
     mov esi, msg_no_long_mode
     call print_string_32
 
     pop esi
-    pop edi
     hlt
 
 global _start
 _start:
     mov esp, stack_top
 
-    mov edi, eax
+    mov ebp, eax
     mov esi, ebx
 
     call check_cpuid
@@ -155,6 +151,9 @@ long_mode_entry:
     mov es, ax
     mov fs, ax
     mov gs, ax
+
+    mov rdi, rbp
+    mov rsi, rsi
 
     mov rsp, stack_top
 
