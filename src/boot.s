@@ -109,19 +109,15 @@ _start:
 
     mov edi, pml4
     xor eax, eax
-    mov ecx, 4096 * 3 / 4
+    mov ecx, 4096 * 2 / 4
     rep stosd
 
     mov eax, pdpt
     or eax, 0b11
     mov [pml4], eax
 
-    mov eax, pd
-    or eax, 0b11
-    mov [pdpt], eax
-
     mov eax, 0b10000011
-    mov [pd], eax
+    mov [pdpt], eax
     
     mov eax, pml4
     mov cr3, eax
