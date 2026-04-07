@@ -1,4 +1,4 @@
-CFLAGS = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mno-red-zone -mno-sse -mno-sse2
+CFLAGS = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mno-red-zone -mno-sse -mno-sse2 -mcmodel=kernel
 AFLAGS = -f elf64
 QEMUFLAGS = -d int -D logs/qemu.log -serial stdio
 

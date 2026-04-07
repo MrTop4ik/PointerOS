@@ -16,17 +16,16 @@ header_start:
     dd 8
 header_end:
 
-section .bss
-
+section .boot_bss alloc nobits
 align 4096
 pml4: resb 4096
 pdpt: resb 4096
 pd: resb 4096
-stack_top:
-    resb 32768
 stack_bottom:
+    resb 32768
+stack_top:
 
-section .rodata
+section .boot_rodata
 msg_no_cpuid: db "ERROR: CPUID NOT SUPPORTED", 0
 msg_no_long_mode: db "ERROR: LONG MODE (X64) NOT SUPPORTED", 0
 
@@ -40,7 +39,7 @@ gdt64:
     dw $ - gdt64 - 1
     dq gdt64
 
-section .text
+section .boot_text
 bits 32
 print_string_32:
     mov edi, 0xB8000
@@ -109,16 +108,23 @@ _start:
 
     mov edi, pml4
     xor eax, eax
-    mov ecx, 4096 * 2 / 4
+    mov ecx, 4096 * 3 / 4
     rep stosd
 
     mov eax, pdpt
     or eax, 0b11
     mov [pml4], eax
+    mov [pml4 + 511 * 8], eax
 
-    mov eax, 0b10000011
+    mov eax, pd
+    or eax, 0b11
     mov [pdpt], eax
+    mov [pdpt + 510 * 8], eax
     
+    mov eax, 0x0
+    or eax, 0b10000011
+    mov [pd], eax
+
     mov eax, pml4
     mov cr3, eax
     
@@ -137,19 +143,21 @@ _start:
 
     lgdt [gdt64.pointer]
 
-    jmp gdt64.code_segment:long_mode_entry
+    jmp gdt64.code_segment:.long_mode_entry
 
 bits 64
-long_mode_entry:
+.long_mode_entry:
+    mov rax, higher_half
+    jmp rax
+
+section .text
+higher_half:
     mov ax, gdt64.data_segment
     mov ss, ax
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
-
-    mov rdi, rbp
-    mov rsi, rsi
 
     mov rsp, stack_top
 

@@ -16,10 +16,10 @@ Already Implemented:
 - [x] **GDT:** Early Global Descriptor Table configured (without tss).
 - [x] **IDT** Interrupt Descriptor Table configured (without ist).
 - [x] **Paging:** 64-bit Paging Enabled.
+- [x] **Higher Half Kernel:** Implemeted.
 - [ ] **Drivers:** 
     - **VGA (or smth better if there is)** In Progress. 
     - **PIT** Implemented.
-- [ ] **Higher Half Kernel:** In Progress.
 
 ## Getting Started
 
