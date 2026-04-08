@@ -19,8 +19,10 @@ header_end:
 section .boot_bss alloc nobits
 align 4096
 pml4: resb 4096
-pdpt: resb 4096
-pd: resb 4096
+pdpt_ident: resb 4096
+pd_indent: resb 4096
+pdpt_kernel: resb 4096
+pd_kernel: resb 4096
 stack_bottom:
     resb 32768
 stack_top:
@@ -38,6 +40,9 @@ gdt64:
 .pointer:
     dw $ - gdt64 - 1
     dq gdt64
+.virt_pointer:
+    dw $ - gdt64 - 1
+    dq gdt64 + 0xFFFFFFFF80000000
 
 section .boot_text
 bits 32
@@ -108,22 +113,32 @@ _start:
 
     mov edi, pml4
     xor eax, eax
-    mov ecx, 4096 * 3 / 4
+    mov ecx, 4096 * 5 / 4
     rep stosd
 
-    mov eax, pdpt
+    mov eax, pdpt_ident
     or eax, 0b11
     mov [pml4], eax
-    mov [pml4 + 511 * 8], eax
 
-    mov eax, pd
+    mov eax, pd_indent
     or eax, 0b11
-    mov [pdpt], eax
-    mov [pdpt + 510 * 8], eax
+    mov [pdpt_ident], eax
     
     mov eax, 0x0
     or eax, 0b10000011
-    mov [pd], eax
+    mov [pd_indent], eax
+
+    mov eax, pdpt_kernel
+    or eax, 0b11
+    mov [pml4 + 511 * 8], eax
+
+    mov eax, pd_kernel
+    or eax, 0b11
+    mov [pdpt_kernel + 510 * 8], eax
+    
+    mov eax, 0x0
+    or eax, 0b10000011
+    mov [pd_kernel], eax
 
     mov eax, pml4
     mov cr3, eax
@@ -152,6 +167,9 @@ bits 64
 
 section .text
 higher_half:
+    mov rax, gdt64.virt_pointer
+    lgdt [rax]
+
     mov ax, gdt64.data_segment
     mov ss, ax
     mov ds, ax
@@ -159,7 +177,16 @@ higher_half:
     mov fs, ax
     mov gs, ax
 
-    mov rsp, stack_top
+    mov rax, stack_top
+    add rax, 0xFFFFFFFF80000000
+    mov rsp, rax
+
+    mov rax, pml4
+    add rax, 0xFFFFFFFF80000000
+    mov qword [rax], 0
+
+    mov rax, cr3
+    mov cr3, rax
 
     extern kernel_main
     call kernel_main
