@@ -101,6 +101,12 @@ check_long_mode:
     pop esi
     hlt
 
+magicr:
+    mov esi, msg_no_cpuid
+    call print_string_32
+
+    hlt
+
 global _start
 _start:
     mov esp, stack_top
@@ -142,7 +148,7 @@ _start:
 
     mov eax, pml4
     mov cr3, eax
-    
+
     mov eax, cr4
     or eax, 1 << 5
     mov cr4, eax
@@ -187,6 +193,9 @@ higher_half:
 
     mov rax, cr3
     mov cr3, rax
+
+    mov rdi, rbp
+    mov rsi, rsi
 
     extern kernel_main
     call kernel_main
