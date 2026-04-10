@@ -23,9 +23,12 @@ pdpt_ident: resb 4096
 pd_indent: resb 4096
 pdpt_kernel: resb 4096
 pd_kernel: resb 4096
+align 16
 stack_bottom:
     resb 32768
 stack_top:
+
+global stack_top
 
 section .boot_rodata
 msg_no_cpuid: db "ERROR: CPUID NOT SUPPORTED", 0
