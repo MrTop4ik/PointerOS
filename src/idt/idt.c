@@ -70,25 +70,31 @@ void init_IDT(void){
     remap_PIC();
 
     for (uint16_t i = 0; i < 256; i++){
-        setIDTGate(i, 0, 0);
+        setIDTGate(i, 0, 0, 0);
     }
 
-    for (uint8_t vector = 0; vector < 32; vector++){
-        setIDTGate(vector, (uint64_t)isr_stub_table[vector], 0x8E);
+    for (uint8_t vector = 0; vector < 8; vector++){
+        setIDTGate(vector, (uint64_t)isr_stub_table[vector], 0x8E, 0);
+    }
+
+    setIDTGate(8, (uint64_t)isr_stub_table[8], 0x8E, 1);
+    
+    for (uint8_t vector = 9; vector < 32; vector++){
+        setIDTGate(vector, (uint64_t)isr_stub_table[vector], 0x8E, 0);
     }
 
     for (uint8_t vector = 32; vector < 48; vector++){
-        setIDTGate(vector, (uint64_t)irq_stub_table[vector - 32], 0x8E);
+        setIDTGate(vector, (uint64_t)irq_stub_table[vector - 32], 0x8E, 0);
     }
 
     __asm__ volatile ("lidt %0" : : "m" (idt_ptr));
     sti();
 }
 
-void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags){
+void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags, uint8_t ist){
     idt_entries[vector].offset_1 = (uint16_t)((uint64_t)handler & 0xFFFF);
     idt_entries[vector].selector = 0x08;
-    idt_entries[vector].ist = 0;
+    idt_entries[vector].ist = ist & 0x07;
     idt_entries[vector].flags = flags;
     idt_entries[vector].offset_2 = (uint16_t)(((uint64_t)handler >> 16) & 0xFFFF);
     idt_entries[vector].offset_3 = (uint32_t)(((uint64_t)handler >> 32) & 0xFFFFFFFF);

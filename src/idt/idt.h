@@ -26,7 +26,7 @@ struct InterruptRegisters {
 
 void remap_PIC(void);
 void init_IDT(void);
-void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags);
+void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags, uint8_t ist);
 void exception_handler(struct InterruptRegisters *regs);
 void isr_handler(struct InterruptRegisters *regs);
 void irq_handler(struct InterruptRegisters *regs);
