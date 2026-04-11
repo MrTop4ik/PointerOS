@@ -1,3 +1,4 @@
+section .text
 global gdt_flush
 gdt_flush:
     lgdt [rdi]
@@ -18,3 +19,11 @@ gdt_flush:
     retfq
 .reload_cs:
     ret
+
+section .bss
+align 16
+ist1_stack_bottom:
+    resb 4096
+ist1_stack_top:
+
+global ist1_stack_top

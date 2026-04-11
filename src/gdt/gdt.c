@@ -1,6 +1,7 @@
 #include "gdt.h"
 
 extern uint8_t stack_top;
+extern uint8_t ist1_stack_top;
 extern void gdt_flush(uint64_t);
 
 struct gdt_entry_struct gdt_entries[7];
@@ -19,6 +20,9 @@ void init_GDT(void){
     }
 
     tss.rsp0 = (uint64_t)&stack_top + 0xFFFFFFFF80000000;
+    
+    tss.ist[0] = ist1_stack_top;
+
     tss.iopb = sizeof(struct TSS);
     
     setTSSGate(5, (uint64_t)&tss, sizeof(struct TSS) - 1);
