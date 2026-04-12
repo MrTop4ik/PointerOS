@@ -21,7 +21,7 @@ void init_GDT(void){
 
     tss.rsp0 = (uint64_t)&stack_top + 0xFFFFFFFF80000000;
     
-    tss.ist[0] = ist1_stack_top;
+    tss.ist[0] = (uint64_t)&ist1_stack_top;
 
     tss.iopb = sizeof(struct TSS);
     
