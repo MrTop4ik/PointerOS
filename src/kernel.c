@@ -12,7 +12,5 @@ void kernel_main(uint64_t magic, struct multiboot_info* bootInfo){
     init_IDT();
     init_PIT(10);
 
-    __asm__ volatile ("int $0");
-
     for (;;);
 }
