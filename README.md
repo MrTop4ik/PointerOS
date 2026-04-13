@@ -18,7 +18,7 @@ Already Implemented:
 - [x] **Paging:** 64-bit Paging Enabled.
 - [x] **Higher Half Kernel:** Implemeted.
 - [ ] **Drivers:** 
-    - **VGA (or smth better if there is)** In Progress. 
+    - **LFB** In Progress. 
     - **PIT** Implemented.
 
 ## Getting Started

@@ -113,7 +113,8 @@ void exception_handler(struct InterruptRegisters *regs){
 
 void isr_handler(struct InterruptRegisters *regs){
     if (regs->int_no < 32){
-        serial_print("ISR occured.\n");
+        serial_print(exceptions[regs->int_no]);
+        serial_print("\n");
         for (;;);
     }
 }
