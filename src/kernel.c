@@ -6,11 +6,13 @@
 #include "idt/idt.h"
 #include "pit.h"
 
-void kernel_main(uint64_t magic, struct multiboot_info* bootInfo){
+void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
     init_GDT();
     init_IDT();
     init_PIT(10);
+
+    struct multiboot_info* bootInfo = (struct multiboot_info *)(physBootInfo + 0xFFFFFFFF80000000);
 
     for (;;);
 }
