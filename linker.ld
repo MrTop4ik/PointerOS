@@ -4,6 +4,8 @@ PHYS_ADDR = 0x100000;
 VIRT_ADDR = 0xFFFFFFFF80000000;
 
 SECTIONS{
+    kernel_start = PHYS_ADDR + VIRT_ADDR;
+
     . = PHYS_ADDR;
 
     .boot : {
@@ -33,5 +35,5 @@ SECTIONS{
         *(.bss)
     }
 
-    _kernel_end = .;
+    kernel_end = .;
 }

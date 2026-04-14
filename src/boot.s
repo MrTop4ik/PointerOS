@@ -104,12 +104,6 @@ check_long_mode:
     pop esi
     hlt
 
-magicr:
-    mov esi, msg_no_cpuid
-    call print_string_32
-
-    hlt
-
 global _start
 _start:
     mov esp, stack_top
@@ -145,9 +139,16 @@ _start:
     or eax, 0b11
     mov [pdpt_kernel + 510 * 8], eax
     
-    mov eax, 0x0
+    mov ecx, 0
+.map_kernel_loop:
+    mov eax, 0x200000
+    mul ecx
     or eax, 0b10000011
-    mov [pd_kernel], eax
+    mov [pd_kernel + ecx * 8], eax
+
+    inc ecx
+    cmp ecx, 64
+    jne .map_kernel_loop
 
     mov eax, pml4
     mov cr3, eax

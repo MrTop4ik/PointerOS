@@ -94,12 +94,21 @@ void serial_print(const char* format, ...){
                 if (*(p+1) == 'l' && *(p+2) == 'x') {
                     p += 2;
                     uint64_t val = va_arg(args, uint64_t);
-                    uint32_t high = (uint32_t)(val >> 32);
-                    uint32_t low = (uint32_t)val;
-                    if (high > 0) {
-                        serial_put_number(high, 16);
+                    
+                    if (val == 0) {
+                        serial_putchar('0');
+                    } else {
+                        char buf[16];
+                        int i = 0;
+                        while (val > 0) {
+                            uint32_t rem = val % 16;
+                            buf[i++] = (rem < 10) ? (rem + '0') : (rem - 10 + 'a');
+                            val /= 16;
+                        }
+                        while (i > 0) {
+                            serial_putchar(buf[--i]);
+                        }
                     }
-                    serial_put_number(low, 16);
                 }
                 break;
             case 'p':

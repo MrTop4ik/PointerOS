@@ -1,6 +1,6 @@
 CFLAGS = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mno-red-zone -mno-sse -mno-sse2 -mcmodel=kernel
 AFLAGS = -f elf64
-QEMUFLAGS = -d int -D logs/qemu.log -serial stdio
+QEMUFLAGS = -d int -D logs/qemu.log -m 512 -serial stdio
 
 iso:
 	nasm 				$(AFLAGS) 		   src/boot.s					-o boot.o
@@ -13,7 +13,8 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c src/gdt/gdt.c				-o gdts.o
 	x86_64-elf-gcc		$(CFLAGS)		-c src/idt/idt.c				-o idts.o
 	x86_64-elf-gcc		$(CFLAGS)		-c src/pit.c					-o pit.o
-	x86_64-elf-gcc -T linker.ld -o kernel -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o
+	x86_64-elf-gcc		$(CFLAGS)		-c src/memory/pmm.c 			-o pmm.o
+	x86_64-elf-gcc -T linker.ld -o kernel -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o
 	grub-file --is-x86-multiboot2 kernel
 	mv kernel isodir/boot/kernel
 	grub-mkrescue -o kernel.iso isodir
