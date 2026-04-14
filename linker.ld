@@ -33,7 +33,13 @@ SECTIONS{
     .bss : AT(ADDR(.bss) - VIRT_ADDR) {
         *(COMMON)
         *(.bss)
+
+        . = ALIGN(4096);
     }
+
+    . += 0x20000;
+
+    . = ALIGN(4096);
 
     kernel_end = .;
 }
