@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include "multiboot2.h"
-#include "utils/utils.h"
 #include "serial/serial.h"
 #include "gdt/gdt.h"
 #include "idt/idt.h"

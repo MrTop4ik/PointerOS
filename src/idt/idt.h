@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include "../utils/utils.h"
+#include "../utils/inlineasm.h"
 #include "../serial/serial.h"
 
 struct idt_entry_struct {

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdarg.h>
-#include "../utils/utils.h"
+#include "../utils/inlineasm.h"
 
 #define COM1_PORT 0x3F8
 
