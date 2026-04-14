@@ -17,6 +17,9 @@ Already Implemented:
 - [x] **IDT** Interrupt Descriptor Table configured.
 - [x] **Paging:** 64-bit Paging Enabled.
 - [x] **Higher Half Kernel:** Implemeted.
+- [ ] **Memory Allocation:**
+    - **PMM** Implemented.
+    - **VMM** In Progress.
 - [ ] **Drivers:** 
     - **LFB** In Progress. 
     - **PIT** Implemented.
