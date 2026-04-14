@@ -23,11 +23,11 @@ SECTIONS{
     }
 
     .data : AT(ADDR(.data) - VIRT_ADDR) {
-        *(.rodata)
+        *(.data)
     }
 
     .rodata : AT(ADDR(.rodata) - VIRT_ADDR) {
-        *(.data)
+        *(.rodata)
     }
 
     .bss : AT(ADDR(.bss) - VIRT_ADDR) {
