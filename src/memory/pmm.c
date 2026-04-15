@@ -65,3 +65,12 @@ void init_PMM(unsigned int bootInfoAddr){
         BITMAP_SET(addr/PAGE_SIZE);
     }
 }
+
+uint64_t pmm_alloc_page(void){
+    for (uint64_t i = 0; i < total_pages; i++){
+        if (!BITMAP_TEST(i)){
+            BITMAP_SET(i);
+            return i * PAGE_SIZE;
+        }
+    }
+}
