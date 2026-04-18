@@ -5,6 +5,7 @@
 #include "idt/idt.h"
 #include "pit.h"
 #include "memory/pmm.h"
+#include "memory/vmm.h"
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
@@ -15,6 +16,7 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     struct multiboot_info* bootInfo = (struct multiboot_info *)(physBootInfo + 0xFFFFFFFF80000000);
 
     init_PMM(physBootInfo);
+    init_VMM(physBootInfo);
 
     for (;;);
 }
