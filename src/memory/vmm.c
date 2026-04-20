@@ -1,9 +1,10 @@
 #include "vmm.h"
 
-#define VIRT_OFFSET 0xFFFFFFFF80000000
+#define KERNEL_OFFSET   0xFFFFFFFF80000000
+#define DIRECT_OFFSET 0xFFFF800000000000
 
 void init_VMM(unsigned int bootInfoAddr){
-    struct multiboot_info* virtBootInfo = (struct multiboot_info *)(bootInfoAddr + VIRT_OFFSET);
+    struct multiboot_info* virtBootInfo = (struct multiboot_info *)(bootInfoAddr + KERNEL_OFFSET);
     uint64_t maxAddr = 0;
 
     struct multiboot_tag* tag = (struct multiboot_tag *)((uint8_t *)virtBootInfo + 8);
@@ -21,4 +22,45 @@ void init_VMM(unsigned int bootInfoAddr){
         }
         tag = (struct multiboot_tag *)((uintptr_t)((uint8_t*)tag + tag->size + 7) & ~7);
     }
+
+    vmm_init_direct_mapping(maxAddr);
+}
+
+void vmm_init_direct_mapping(uint64_t maxAddr){
+    uint64_t pml4_phys = pmm_alloc_page();
+    uint64_t *pml4 = (uint64_t *)(pml4_phys + KERNEL_OFFSET);
+    memset(pml4, 0, 0x1000);
+
+    uint64_t* old_pml4 = (uint64_t *)(read_cr3() + KERNEL_OFFSET);
+    pml4[511] = old_pml4[511];
+
+    for (uint64_t paddr = 0; paddr < maxAddr; paddr += 0x200000){
+        uint64_t vaddr = paddr + DIRECT_OFFSET;
+
+        uint64_t pml4_indx = (vaddr >> 39) & 0x1FF;
+        uint64_t pdpt_indx = (vaddr >> 30) & 0x1FF;
+        uint64_t pd_indx = (vaddr >> 21) & 0x1FF;
+
+        if (!(pml4[pml4_indx] & 1)){
+            uint64_t new_table_phys = pmm_alloc_page();
+            uint64_t *new_table = (uint64_t *)(new_table_phys + KERNEL_OFFSET);
+            memset(new_table, 0, 0x1000);
+            pml4[pml4_indx] = new_table_phys | 0x3;
+        }
+
+        uint64_t *pdpt = (uint64_t *)((pml4[pml4_indx] & ~0xFFF) + KERNEL_OFFSET);
+
+        if (!(pdpt[pdpt_indx] & 1)){
+            uint64_t new_table_phys = pmm_alloc_page();
+            uint64_t *new_table = (uint64_t *)(new_table_phys + KERNEL_OFFSET);
+            memset(new_table, 0, 0x1000);
+            pdpt[pdpt_indx] = new_table_phys | 0x3;
+        }
+
+        uint64_t *pd = (uint64_t *)((pdpt[pdpt_indx] & ~0xFFF) + KERNEL_OFFSET);
+
+        pd[pd_indx] = paddr | 0x83;
+    }
+
+    write_cr3(pml4_phys);
 }
