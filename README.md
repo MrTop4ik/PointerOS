@@ -19,7 +19,7 @@ Already Implemented:
 - [x] **Higher Half Kernel:** Implemeted.
 - [ ] **Memory Allocation:**
     - **PMM** Implemented.
-    - **VMM** In Progress.
+    - **VMM** Half-Implemented.
 - [ ] **Drivers:** 
     - **LFB** In Progress. 
     - **PIT** Implemented.
