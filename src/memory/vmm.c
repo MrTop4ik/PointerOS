@@ -58,7 +58,7 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
             pml4[pml4_indx] = new_table_phys | (PTE_PRESENT | PTE_WRITABLE);
         }
 
-        uint64_t *pdpt = (uint64_t *)((pml4[pml4_indx] & ~0xFFF) + KERNEL_OFFSET);
+        uint64_t *pdpt = (uint64_t *)((pml4[pml4_indx] & PAGE_MASK_4KB) + KERNEL_OFFSET);
 
         if (!(pdpt[pdpt_indx] & PTE_PRESENT)){
             uint64_t new_table_phys = pmm_alloc_page();
@@ -67,7 +67,7 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
             pdpt[pdpt_indx] = new_table_phys | (PTE_PRESENT | PTE_WRITABLE);
         }
 
-        uint64_t *pd = (uint64_t *)((pdpt[pdpt_indx] & ~0xFFF) + KERNEL_OFFSET);
+        uint64_t *pd = (uint64_t *)((pdpt[pdpt_indx] & PAGE_MASK_4KB) + KERNEL_OFFSET);
 
         pd[pd_indx] = paddr | (PTE_PRESENT | PTE_WRITABLE | PET_PAGE_SIZE);
     }
