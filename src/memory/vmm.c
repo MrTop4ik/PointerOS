@@ -4,8 +4,9 @@
 #define DIRECT_OFFSET 0xFFFF800000000000
 
 #define PAGE_SIZE_4KB 4096
-#define PAGE_MASK_4KB (~(PAGE_MASK_4KB - 1))
-#define PAGE_MASK_2MB 0x200000
+#define PAGE_MASK_4KB (~(PAGE_SIZE_4KB - 1))
+#define PAGE_SIZE_2MB 0x200000
+#define PAGE_MASK_2MB (~(PAGE_SIZE_2MB - 1))
 
 #define PTE_PRESENT   (1ULL << 0)
 #define PTE_WRITABLE  (1ULL << 1)
@@ -38,7 +39,7 @@ void init_VMM(unsigned int bootInfoAddr){
 void vmm_init_direct_mapping(uint64_t maxAddr){
     uint64_t pml4_phys = pmm_alloc_page();
     uint64_t *pml4 = (uint64_t *)(pml4_phys + KERNEL_OFFSET);
-    memset(pml4, 0, 0x1000);
+    memset(pml4, 0, PAGE_SIZE_4KB);
 
     uint64_t* old_pml4 = (uint64_t *)(read_cr3() + KERNEL_OFFSET);
     pml4[511] = old_pml4[511];
@@ -53,7 +54,7 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
         if (!(pml4[pml4_indx] & PTE_PRESENT)){
             uint64_t new_table_phys = pmm_alloc_page();
             uint64_t *new_table = (uint64_t *)(new_table_phys + KERNEL_OFFSET);
-            memset(new_table, 0, 0x1000);
+            memset(new_table, 0, PAGE_SIZE_4KB);
             pml4[pml4_indx] = new_table_phys | (PTE_PRESENT | PTE_WRITABLE);
         }
 
@@ -62,7 +63,7 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
         if (!(pdpt[pdpt_indx] & PTE_PRESENT)){
             uint64_t new_table_phys = pmm_alloc_page();
             uint64_t *new_table = (uint64_t *)(new_table_phys + KERNEL_OFFSET);
-            memset(new_table, 0, 0x1000);
+            memset(new_table, 0, PAGE_SIZE_4KB);
             pdpt[pdpt_indx] = new_table_phys | (PTE_PRESENT | PTE_WRITABLE);
         }
 
