@@ -35,7 +35,7 @@ void init_VMM(unsigned int bootInfoAddr){
 
     vmm_init_direct_mapping(maxAddr);
 
-    vmm_map_page(read_cr3(), 0x10000000, 0xFFFFFFFF90000000, PTE_WRITABLE);
+    vmm_map_page(read_cr3(), 0x10000000, 0xFFFFFFFF90000000, 0x67, PTE_WRITABLE);
 }
 
 void vmm_init_direct_mapping(uint64_t maxAddr){
@@ -77,11 +77,11 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
     write_cr3(pml4_phys);
 }
 
-void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t flags){
+void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t ps, uint64_t flags){
     uint64_t pml4_indx = (vaddr >> 39) & 0x1FF;
     uint64_t pdpt_indx = (vaddr >> 30) & 0x1FF;
     uint64_t pd_indx = (vaddr >> 21) & 0x1FF;
-    uint64_t pt_indx = (vaddr >> 12) & 0x1FF;
+    
 
     uint64_t *pml4 = (uint64_t *)(pml4_phys + DIRECT_OFFSET);
 
@@ -103,16 +103,30 @@ void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t f
 
     uint64_t *pd = (uint64_t *)((pdpt[pdpt_indx] & PAGE_MASK_4KB) + DIRECT_OFFSET);
 
-    if (!(pd[pd_indx] & PTE_PRESENT)){
-        uint64_t new_table_phys = pmm_alloc_page();
-        uint64_t *new_table = (uint64_t *)(new_table_phys + DIRECT_OFFSET);
-        memset(new_table, 0, PAGE_SIZE_4KB);
-        pd[pd_indx] = new_table_phys | (PTE_PRESENT | PTE_WRITABLE);
+    if (ps == PAGE_SIZE_4KB){
+        uint64_t pt_indx = (vaddr >> 12) & 0x1FF;
+
+        if (!(pd[pd_indx] & PTE_PRESENT)){
+            uint64_t new_table_phys = pmm_alloc_page();
+            uint64_t *new_table = (uint64_t *)(new_table_phys + DIRECT_OFFSET);
+            memset(new_table, 0, PAGE_SIZE_4KB);
+            pd[pd_indx] = new_table_phys | (PTE_PRESENT | PTE_WRITABLE);
+        }
+
+        uint64_t *pt = (uint64_t *)((pd[pd_indx] & PAGE_MASK_4KB) + DIRECT_OFFSET);
+
+        pt[pt_indx] = paddr | (PTE_PRESENT | flags);
+
+    } else if (ps == PAGE_SIZE_2MB){
+
+        pd[pd_indx] = paddr | (PTE_PRESENT | PTE_PAGE_SIZE | flags);
+
+    } else {
+
+        serial_print("Wrong Page Size.\n");
+        return;
+
     }
-
-    uint64_t *pt = (uint64_t *)((pd[pd_indx] & PAGE_MASK_4KB) + DIRECT_OFFSET);
-
-    pt[pt_indx] = paddr | (PTE_PRESENT | flags);
 
     invalidate(vaddr);
 }
