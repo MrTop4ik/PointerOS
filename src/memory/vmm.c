@@ -34,8 +34,6 @@ void init_VMM(unsigned int bootInfoAddr){
     }
 
     vmm_init_direct_mapping(maxAddr);
-
-    vmm_map_page(read_cr3(), 0x10000000, 0xFFFFFFFF90000000, 0x67, PTE_WRITABLE);
 }
 
 void vmm_init_direct_mapping(uint64_t maxAddr){
