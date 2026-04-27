@@ -4,6 +4,7 @@
 #include "gdt/gdt.h"
 #include "idt/idt.h"
 #include "pit.h"
+#include "utils/inlineasm.h"
 #include "memory/pmm.h"
 #include "memory/vmm.h"
 

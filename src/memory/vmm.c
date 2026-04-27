@@ -11,7 +11,7 @@
 #define PTE_PRESENT   (1ULL << 0)
 #define PTE_WRITABLE  (1ULL << 1)
 #define PTE_USER      (1ULL << 2)
-#define PET_PAGE_SIZE (1ULL << 7)
+#define PTE_PAGE_SIZE (1ULL << 7)
 
 void init_VMM(unsigned int bootInfoAddr){
     struct multiboot_info* virtBootInfo = (struct multiboot_info *)(bootInfoAddr + KERNEL_OFFSET);
@@ -44,7 +44,7 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
     uint64_t* old_pml4 = (uint64_t *)(read_cr3() + KERNEL_OFFSET);
     pml4[511] = old_pml4[511];
 
-    for (uint64_t paddr = 0; paddr < maxAddr; paddr += PAGE_MASK_2MB){
+    for (uint64_t paddr = 0; paddr < maxAddr; paddr += PAGE_SIZE_2MB){
         uint64_t vaddr = paddr + DIRECT_OFFSET;
 
         uint64_t pml4_indx = (vaddr >> 39) & 0x1FF;
@@ -69,7 +69,7 @@ void vmm_init_direct_mapping(uint64_t maxAddr){
 
         uint64_t *pd = (uint64_t *)((pdpt[pdpt_indx] & PAGE_MASK_4KB) + KERNEL_OFFSET);
 
-        pd[pd_indx] = paddr | (PTE_PRESENT | PTE_WRITABLE | PET_PAGE_SIZE);
+        pd[pd_indx] = paddr | (PTE_PRESENT | PTE_WRITABLE | PTE_PAGE_SIZE);
     }
 
     write_cr3(pml4_phys);
