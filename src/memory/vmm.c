@@ -12,6 +12,10 @@
 #define PTE_WRITABLE  (1ULL << 1)
 #define PTE_USER      (1ULL << 2)
 #define PTE_PAGE_SIZE (1ULL << 7)
+#define PTE_PAT_4KB   (1ULL << 7)
+#define PTE_PAT_HUGE  (1ULL << 12)
+
+#define MSR_IA32_PAT 0x277
 
 void init_VMM(unsigned int bootInfoAddr){
     struct multiboot_info* virtBootInfo = (struct multiboot_info *)(bootInfoAddr + KERNEL_OFFSET);
@@ -34,6 +38,7 @@ void init_VMM(unsigned int bootInfoAddr){
     }
 
     vmm_init_direct_mapping(maxAddr);
+    init_pat();
 }
 
 void vmm_init_direct_mapping(uint64_t maxAddr){
@@ -127,4 +132,14 @@ void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t p
     }
 
     invalidate(vaddr);
+}
+
+void init_pat(void){
+    uint32_t low, high;
+
+    __asm__ volatile ("rdmsr" : "=a"(low), "=d"(high) : "c"(MSR_IA32_PAT));
+
+    high = (high & ~0xFF) | 0x06;
+
+    __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(MSR_IA32_PAT));
 }
