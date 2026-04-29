@@ -1,20 +1,5 @@
 #include "vmm.h"
 
-#define KERNEL_OFFSET 0xFFFFFFFF80000000
-#define DIRECT_OFFSET 0xFFFF800000000000
-
-#define PAGE_SIZE_4KB 4096
-#define PAGE_MASK_4KB (~(PAGE_SIZE_4KB - 1))
-#define PAGE_SIZE_2MB 0x200000
-#define PAGE_MASK_2MB (~(PAGE_SIZE_2MB - 1))
-
-#define PTE_PRESENT   (1ULL << 0)
-#define PTE_WRITABLE  (1ULL << 1)
-#define PTE_USER      (1ULL << 2)
-#define PTE_PAGE_SIZE (1ULL << 7)
-#define PTE_PAT_4KB   (1ULL << 7)
-#define PTE_PAT_HUGE  (1ULL << 12)
-
 #define MSR_IA32_PAT 0x277
 
 void init_VMM(unsigned int bootInfoAddr){
