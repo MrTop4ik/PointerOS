@@ -7,6 +7,7 @@
 #include "utils/inlineasm.h"
 #include "memory/pmm.h"
 #include "memory/vmm.h"
+#include "lfb/lfb.h"
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
@@ -18,6 +19,8 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
 
     init_PMM(physBootInfo);
     init_VMM(physBootInfo);
+    
+    init_LFB(physBootInfo);
 
     for (;;);
 }

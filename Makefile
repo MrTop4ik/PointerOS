@@ -15,7 +15,8 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c src/pit.c					-o pit.o
 	x86_64-elf-gcc		$(CFLAGS)		-c src/memory/pmm.c 			-o pmm.o
 	x86_64-elf-gcc		$(CFLAGS)		-c src/memory/vmm.c				-o vmm.o
-	x86_64-elf-gcc -T linker.ld -o kernel -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o
+	x86_64-elf-gcc		$(CFLAGS)		-c src/lfb/lfb.c				-o lfb.o
+	x86_64-elf-gcc -T linker.ld -o kernel -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o
 	grub-file --is-x86-multiboot2 kernel
 	mv kernel isodir/boot/kernel
 	grub-mkrescue -o kernel.iso isodir
