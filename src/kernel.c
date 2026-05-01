@@ -15,8 +15,6 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     init_IDT();
     init_PIT(10);
 
-    struct multiboot_info* bootInfo = (struct multiboot_info *)(physBootInfo + KERNEL_OFFSET);
-
     init_PMM(physBootInfo);
     init_VMM(physBootInfo);
     
