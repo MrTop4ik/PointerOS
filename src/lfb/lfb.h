@@ -4,6 +4,6 @@
 #include "../memory/vmm.h"
 #include "../utils/inlineasm.h"
 
-#define LFB_ADDR 0xFFFFFFFF8C000000
+#define LFB_ADDR 0xFFFFFFFFC0000000
 
 void init_LFB(unsigned int physBootInfo);

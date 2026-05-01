@@ -119,6 +119,54 @@ void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t p
     invalidate(vaddr);
 }
 
+void vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr){
+    uint64_t *pml4 = (uint64_t *)(pml4_phys + DIRECT_OFFSET);
+
+    int level;
+    void *entry = vmm_get_entry(read_cr3(), vaddr, &level);
+
+    if (entry){
+        *(uint64_t*)entry = 0;
+        invalidate(vaddr);
+    }
+}
+
+void *vmm_get_entry(uint64_t pml4_phys, uint64_t vaddr, int *level){
+    uint64_t pml4_indx = (vaddr >> 39) & 0x1FF;
+    uint64_t pdpt_indx = (vaddr >> 30) & 0x1FF;
+    uint64_t pd_indx = (vaddr >> 21) & 0x1FF;
+    uint64_t pt_indx = (vaddr >> 12) & 0x1FF;
+
+    uint64_t *pml4 = (uint64_t *)(pml4_phys + DIRECT_OFFSET);
+
+    if (!(pml4[pml4_indx] & PTE_PRESENT)) return NULL;
+    if (pml4[pml4_indx] & PTE_PAGE_SIZE){
+        *level = 3;
+        return &pml4[pml4_indx];
+    }
+
+    uint64_t *pdpt = (uint64_t *)((pml4[pml4_indx] & PAGE_MASK_4KB) + DIRECT_OFFSET);
+
+    if (!(pdpt[pdpt_indx] & PTE_PRESENT)) return NULL;
+    if (pdpt[pdpt_indx] & PTE_PAGE_SIZE){
+        *level = 2;
+        return &pdpt[pdpt_indx];
+    }
+
+    uint64_t *pd = (uint64_t *)((pdpt[pdpt_indx] & PAGE_MASK_4KB) + DIRECT_OFFSET);
+
+    if (!(pd[pd_indx] & PTE_PRESENT)) return NULL;
+    if (pd[pd_indx] & PTE_PAGE_SIZE){
+        *level = 2;
+        return &pd[pd_indx];
+    }
+
+    uint64_t *pt = (uint64_t *)((pd[pd_indx] & PAGE_MASK_4KB) + DIRECT_OFFSET);
+
+    *level = 0;
+    return &pt[pt_indx];
+}
+
 void init_pat(void){
     uint32_t low, high;
 
