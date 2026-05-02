@@ -1,12 +1,5 @@
 #include "pmm.h"
 
-#define VIRT_OFFSET 0xFFFFFFFF80000000
-#define PAGE_SIZE   4096
-
-#define BITMAP_SET(bit)  (bitmap[(bit)/8] |= (1 << ((bit) % 8)))
-#define BITMAP_CLR(bit)  (bitmap[(bit)/8] &= ~(1 << ((bit) % 8)))
-#define BITMAP_TEST(bit) (bitmap[(bit)/8] & (1 << ((bit)% 8)))
-
 uint8_t* bitmap;
 uint64_t total_pages = 0;
 
@@ -14,7 +7,7 @@ extern uint8_t kernel_start[];
 extern uint8_t kernel_end[];
 
 void init_PMM(unsigned int bootInfoAddr){
-    struct multiboot_info* virtBootInfo = (struct multiboot_info *)(bootInfoAddr + VIRT_OFFSET);
+    struct multiboot_info* virtBootInfo = (struct multiboot_info *)(bootInfoAddr + KERNEL_OFFSET);
     uint64_t maxAddr = 0;
 
     struct multiboot_tag* tag = (struct multiboot_tag *)((uint8_t *)virtBootInfo + 8);
@@ -35,7 +28,7 @@ void init_PMM(unsigned int bootInfoAddr){
         tag = (struct multiboot_tag *)((uintptr_t)((uint8_t*)tag + tag->size + 7) & ~7);
     }
 
-    total_pages = maxAddr / PAGE_SIZE;
+    total_pages = maxAddr / PAGE_SIZE_4KB;
     uint64_t bitmap_size = (total_pages + 7)/ 8;
 
     bitmap = (uint8_t *)kernel_end;
@@ -49,8 +42,8 @@ void init_PMM(unsigned int bootInfoAddr){
             uint64_t num_entries = (mmap->size - sizeof(struct multiboot_tag_mmap)) / mmap->entry_size;
             for (uint64_t i = 0; i < num_entries; i++){
                 if (mmap->entries[i].type == MULTIBOOT_MEMORY_AVAILABLE && mmap->entries[i].addr >= 0x100000){
-                    for (uint64_t addr = mmap->entries[i].addr; addr < mmap->entries[i].addr + mmap->entries[i].len; addr += PAGE_SIZE){
-                        BITMAP_CLR(addr/PAGE_SIZE);
+                    for (uint64_t addr = mmap->entries[i].addr; addr < mmap->entries[i].addr + mmap->entries[i].len; addr += PAGE_SIZE_4KB){
+                        BITMAP_CLR(addr/PAGE_SIZE_4KB);
                     }
                 }
             }
@@ -58,11 +51,11 @@ void init_PMM(unsigned int bootInfoAddr){
         tag = (struct multiboot_tag *)((uintptr_t)((uint8_t*)tag + tag->size + 7) & ~7);
     }
 
-    uint64_t phys_kernel_start = (uintptr_t)kernel_start - VIRT_OFFSET;
-    uint64_t phys_kernel_end = ((uintptr_t)bitmap + bitmap_size) - VIRT_OFFSET;
+    uint64_t phys_kernel_start = (uintptr_t)kernel_start - KERNEL_OFFSET;
+    uint64_t phys_kernel_end = ((uintptr_t)bitmap + bitmap_size) - KERNEL_OFFSET;
 
-    for (uint64_t addr = phys_kernel_start; addr < phys_kernel_end; addr += PAGE_SIZE){
-        BITMAP_SET(addr/PAGE_SIZE);
+    for (uint64_t addr = phys_kernel_start; addr < phys_kernel_end; addr += PAGE_SIZE_4KB){
+        BITMAP_SET(addr/PAGE_SIZE_4KB);
     }
 }
 
@@ -70,7 +63,7 @@ uint64_t pmm_alloc_page(void){
     for (uint64_t i = 0; i < total_pages; i++){
         if (!BITMAP_TEST(i)){
             BITMAP_SET(i);
-            return i * PAGE_SIZE;
+            return i * PAGE_SIZE_4KB;
         }
     }
 }

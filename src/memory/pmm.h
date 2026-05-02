@@ -4,5 +4,12 @@
 #include "../utils/string.h"
 #include "../serial/serial.h"
 
+#define KERNEL_OFFSET 0xFFFFFFFF80000000
+#define PAGE_SIZE_4KB 0x1000
+
+#define BITMAP_SET(bit)  (bitmap[(bit)/8] |= (1 << ((bit) % 8)))
+#define BITMAP_CLR(bit)  (bitmap[(bit)/8] &= ~(1 << ((bit) % 8)))
+#define BITMAP_TEST(bit) (bitmap[(bit)/8] & (1 << ((bit)% 8)))
+
 void init_PMM(unsigned int bootInfoAddr);
 uint64_t pmm_alloc_page(void);
