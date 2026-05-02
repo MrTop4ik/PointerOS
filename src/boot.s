@@ -136,7 +136,7 @@ _start:
     or eax, 0b11
     mov [pdpt_ident], eax
     
-    mov eax, 0x0
+    xor eax, eax
     or eax, 0b10000011
     mov [pd_indent], eax
 

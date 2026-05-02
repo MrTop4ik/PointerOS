@@ -120,10 +120,8 @@ void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t p
 }
 
 void vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr){
-    uint64_t *pml4 = (uint64_t *)(pml4_phys + DIRECT_OFFSET);
-
     int level;
-    void *entry = vmm_get_entry(read_cr3(), vaddr, &level);
+    void *entry = vmm_get_entry(pml4_phys, vaddr, &level);
 
     if (entry){
         *(uint64_t*)entry = 0;

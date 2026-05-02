@@ -66,4 +66,6 @@ uint64_t pmm_alloc_page(void){
             return i * PAGE_SIZE_4KB;
         }
     }
+
+    return 0;
 }
