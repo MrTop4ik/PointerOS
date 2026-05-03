@@ -12,6 +12,8 @@ void init_slab(void){
 }
 
 void *slab_alloc(kmem_cache_t *cache){
+    if (!cache) return NULL;
+
     if (!cache->slabs_partial){
         slab_t *new_slab = slab_create(cache);
         if (!new_slab) return NULL;

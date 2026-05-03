@@ -26,6 +26,8 @@ typedef struct kmem_cache {
     struct slab *slabs_full;
 } kmem_cache_t;
 
+extern kmem_cache_t kernel_caches[NUM_CACHES];
+
 void init_slab(void);
 void *slab_alloc(kmem_cache_t *cahce);
 slab_t *slab_create(kmem_cache_t *cache);
