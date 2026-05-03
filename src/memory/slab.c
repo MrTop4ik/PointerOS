@@ -85,7 +85,7 @@ void slab_free(void *ptr){
         int index = ((uint64_t)ptr - HEAP_START) / PAGE_SIZE_4KB;
         metadata[index].is_slab = 0;
 
-        buddy_free(ptr);
+        buddy_free(slab);
     }
 }
 

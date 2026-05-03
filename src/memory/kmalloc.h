@@ -10,3 +10,5 @@
 #define HEAP_SIZE  0x1000000
 
 void init_kheap(void);
+void *kmalloc(size_t size);
+void kfree(void *ptr);

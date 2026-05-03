@@ -9,3 +9,34 @@ void init_kheap(void){
     init_buddy();
     init_slab();
 }
+
+void *kmalloc(size_t size){
+    if (size == 0) return NULL;
+
+    if (size > 2048){
+        int order = 0;
+        size_t s = PAGE_SIZE_4KB;
+
+        while (s < size){
+            s <<= 1;
+            order++;
+        }
+
+        return buddy_alloc(order);
+    }
+
+    for (int i = 0; i < NUM_CACHES; i++){
+        if (size <= kernel_caches[i].obj_size) return slab_alloc(&kernel_caches[i]);
+    }
+
+    return NULL;
+}
+
+void kfree(void *ptr){
+    if (!ptr) return;
+
+    int index = ((uint64_t)ptr - HEAP_START) / PAGE_SIZE_4KB;
+    
+    if (metadata[index].is_slab) slab_free(ptr);
+    else buddy_free(ptr);
+}

@@ -17,7 +17,7 @@ Already Implemented:
 - [x] **IDT** Interrupt Descriptor Table configured.
 - [x] **Paging:** 64-bit Paging Enabled.
 - [x] **Higher Half Kernel:** Implemeted.
-- [ ] **Memory Allocation:**
+- [x] **KMemory Allocation:**
     - **PMM** Implemented.
     - **VMM** Implemented.
     - **KMAlloc:**
