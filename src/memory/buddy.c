@@ -38,7 +38,8 @@ void *buddy_alloc(int order){
     return NULL;
 }
 
-void buddy_free(uint64_t addr){
+void buddy_free(void *ptr){
+    uint64_t addr = (uint64_t)ptr;
     int index = (addr - HEAP_START) / PAGE_SIZE_4KB;
     
     int i = metadata[index].order;

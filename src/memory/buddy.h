@@ -20,7 +20,7 @@ typedef struct page_metadata {
 
 void init_buddy(void);
 void *buddy_alloc(int order);
-void buddy_free(uint64_t addr);
+void buddy_free(void *ptr);
 int is_buddy_free(uint64_t buddy_addr, int order);
 void remove_from_list(uint64_t addr, int order);
 void add_to_list(uint64_t addr, int order);
