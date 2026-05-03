@@ -6,7 +6,7 @@
 #include "kmalloc.h"
 
 #define MAX_ORDERS 12
-#define TOTAL_PAGES HEAP_SIZE / PAGE_SIZE_4KB
+#define TOTAL_PAGES 4096
 
 typedef struct free_block {
     struct free_block *prev;
@@ -16,11 +16,14 @@ typedef struct free_block {
 typedef struct page_metadata {
     uint8_t order : 4;
     uint8_t is_free : 1;
+    uint8_t is_slab: 1;
 } page_metadata_t;
+
+extern page_metadata_t metadata[TOTAL_PAGES];
 
 void init_buddy(void);
 void *buddy_alloc(int order);
 void buddy_free(void *ptr);
 int is_buddy_free(uint64_t buddy_addr, int order);
-void remove_from_list(uint64_t addr, int order);
-void add_to_list(uint64_t addr, int order);
+void buddy_list_remove(uint64_t addr, int order);
+void buddy_list_add(uint64_t addr, int order);

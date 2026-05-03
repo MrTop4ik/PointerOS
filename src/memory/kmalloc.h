@@ -4,6 +4,7 @@
 #include "pmm.h"
 #include "vmm.h"
 #include "buddy.h"
+#include "slab.h"
 
 #define HEAP_START 0xFFFFFFFFE0000000
 #define HEAP_SIZE  0x1000000

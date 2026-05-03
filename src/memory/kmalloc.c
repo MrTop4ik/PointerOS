@@ -7,4 +7,5 @@ void init_kheap(void){
     }
 
     init_buddy();
+    init_slab();
 }
