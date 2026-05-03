@@ -22,7 +22,7 @@ Already Implemented:
     - **VMM** Implemented.
     - **KMAlloc:**
         - **Buddy Allocator** Implemented.
-        - **Slab Allocator** In Progress.
+        - **Slab Allocator** Implemented.
 - [ ] **Drivers:** 
     - **LFB** In Progress. 
     - **PIT** Implemented.
