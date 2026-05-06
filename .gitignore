@@ -1,4 +1,4 @@
 *.o
 *.iso
 logs/*.log
-isodir/boot/kernel
+isodir/boot/kernel.bin

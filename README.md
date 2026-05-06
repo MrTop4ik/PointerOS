@@ -25,7 +25,7 @@ Already Implemented:
         - **Slab Allocator** Implemented.
 - [ ] **Drivers:** 
     - **LFB** In Progress. 
-    - **PIT** Implemented.
+    - **QEMU Serial** Implemented.
 
 ## Getting Started
 
