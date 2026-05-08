@@ -168,9 +168,9 @@ void *vmm_get_entry(uint64_t pml4_phys, uint64_t vaddr, int *level){
 void init_pat(void){
     uint32_t low, high;
 
-    __asm__ volatile ("rdmsr" : "=a"(low), "=d"(high) : "c"(MSR_IA32_PAT));
+    read_msr(MSR_IA32_PAT, &low, &high);
 
     high = (high & ~0xFF) | 0x06;
 
-    __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(MSR_IA32_PAT));
+    write_msr(MSR_IA32_PAT, low, high);
 }

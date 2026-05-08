@@ -24,6 +24,17 @@ void write_cr3(uint64_t paddr){
     __asm__ volatile ("mov %0, %%cr3" : : "r" (paddr) : "memory");
 }
 
+void read_msr(uint32_t index, uint32_t *l, uint32_t *h){
+    uint32_t low, high;
+    __asm__ volatile ("rdmsr" : "=a"(low), "=d"(high) : "c"(index));
+    *l = low;
+    *h = high;
+}
+
+void write_msr(uint32_t index, uint32_t low, uint32_t high){
+    __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(index));
+}
+
 void sti(void){
     __asm__ volatile ("sti");
 }
