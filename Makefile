@@ -1,6 +1,6 @@
 CFLAGS = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -mno-red-zone -mno-sse -mno-sse2 -mcmodel=kernel -Iinclude
 AFLAGS = -f elf64
-QEMUFLAGS = -d int -D logs/qemu.log -m 512 -serial stdio
+QEMUFLAGS = -d int -D logs/qemu.log -m 4096 -machine q35,acpi=on -bios /usr/share/ovmf/OVMF.fd -serial stdio -display gtk
 
 iso:
 	nasm 				$(AFLAGS) 		   arch/x86_64/boot/boot.s		-o boot.o
@@ -19,11 +19,12 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/buddy.c					-o buddy.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/slab.c					-o slab.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/kmalloc.c					-o kmalloc.o
-	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/apic.c			-o apic.o
+	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o apic.o
 	grub-file --is-x86-multiboot2 kernel.bin
 	mv kernel.bin isodir/boot/kernel.bin
 	grub-mkrescue -o kernel.iso isodir
 	rm *.o
 
 run: kernel.iso
-	qemu-system-x86_64 kernel.iso $(QEMUFLAGS)
+	qemu-system-x86_64 -cdrom kernel.iso $(QEMUFLAGS)

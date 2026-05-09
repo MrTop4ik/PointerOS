@@ -30,7 +30,13 @@ Already Implemented:
 ## Getting Started
 
 ### Prerequisites
-You need a cross-compiler `x86_64-elf-gcc` (with no red-zone), `nasm`, and `qemu`.
+| Category | Tool | Notes |
+| :--- | :--- | :--- |
+| **Cross-Compiler** | `x86_64-elf-gcc` | Required `-mno-red-zone` flag to prevent stack corruption |
+| **Assembler** | `nasm` | Used for bootloader entry and interrupt stubs |
+| **Emulator** | `QEMU` | Run with `-machine q35` and `-bios OVMF.fd` |
+| **ISO Creation** | `grub-common` | Uses `grub-mkrescue` to build the bootable image |
+| **UEFI Support** | `grub-efi-amd64-bin` | Provides modules for `UEFI` booting and `Multiboot2 Tag 15` |
 
 ### Build & Run
 ```bash

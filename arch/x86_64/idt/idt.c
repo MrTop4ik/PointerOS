@@ -2,6 +2,7 @@
 
 extern void* isr_stub_table[];
 extern void* irq_stub_table[];
+extern void* isr255();
 
 char *exceptions[] = {
     "Division By Zero.",
@@ -59,7 +60,7 @@ void remap_PIC(void){
     outb(0x21, 0x01);
     outb(0xA1, 0x01);
 
-    outb(0x21, 0xFE);
+    outb(0x21, 0xFF);
     outb(0xA1, 0xFF);
 }
 
@@ -87,8 +88,9 @@ void init_IDT(void){
         setIDTGate(vector, (uint64_t)irq_stub_table[vector - 32], 0x8E, 0);
     }
 
+    setIDTGate(255, (uint64_t)isr255, 0x8E, 0);
+
     __asm__ volatile ("lidt %0" : : "m" (idt_ptr));
-    sti();
 }
 
 void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags, uint8_t ist){
@@ -127,6 +129,10 @@ void deleteIRQHandler(uint8_t num){
     irq_handlers[num] = 0;
 }
 
+void lapic_eoi(void){
+    *(volatile uint32_t *)(LAPIC_VIRT + LAPIC_EOI_OFFSET) = 0;
+}
+
 void irq_handler(struct InterruptRegisters *regs){
     void (*handler)(struct InterruptRegisters *regs);
 
@@ -134,8 +140,5 @@ void irq_handler(struct InterruptRegisters *regs){
 
     handler(regs);
 
-    if (regs->int_no >= 40){
-        outb(0xA0, 0x20);
-    }
-    outb(0x20, 0x20);
+    lapic_eoi();
 }

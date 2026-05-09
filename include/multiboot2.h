@@ -27,15 +27,15 @@
 #define MULTIBOOT_TAG_TYPE_EFI64_IH          20
 #define MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR    21
 
-#define MULTIBOOT_MEMORY_AVAILABLE              1
-#define MULTIBOOT_MEMORY_RESERVED               2
-#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
-#define MULTIBOOT_MEMORY_NVS                    4
-#define MULTIBOOT_MEMORY_BADRAM                 5
+#define MULTIBOOT_MEMORY_AVAILABLE           1
+#define MULTIBOOT_MEMORY_RESERVED            2
+#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE    3
+#define MULTIBOOT_MEMORY_NVS                 4
+#define MULTIBOOT_MEMORY_BADRAM              5
 
-#define MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED      0
-#define MULTIBOOT_FRAMEBUFFER_TYPE_RGB          1
-#define MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT     2
+#define MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED   0
+#define MULTIBOOT_FRAMEBUFFER_TYPE_RGB       1
+#define MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT  2
 
 struct multiboot_tag {
     uint32_t type;
@@ -92,6 +92,18 @@ struct multiboot_tag_framebuffer {
             uint8_t framebuffer_blue_mask_size;
         };
     };
+}__attribute__((packed));
+
+struct multiboot_tag_old_acpi {
+    uint32_t type;
+    uint32_t size;
+    uint8_t rsdp[0];
+}__attribute__((packed));
+
+struct multiboot_tag_new_acpi {
+    uint32_t type;
+    uint32_t size;
+    uint8_t rsdp[0];
 }__attribute__((packed));
 
 struct multiboot_info {
