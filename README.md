@@ -36,7 +36,7 @@ Already Implemented:
 | **Assembler** | `nasm` | Used for bootloader entry and interrupt stubs |
 | **Emulator** | `QEMU` | Run with `-machine q35` and `-bios OVMF.fd` |
 | **ISO Creation** | `grub-common` | Uses `grub-mkrescue` to build the bootable image |
-| **UEFI Support** | `grub-efi-amd64-bin` | Provides modules for `UEFI` booting and `Multiboot2 Tag 15` |
+| **UEFI Support** | `grub-efi-amd64-bin` | Provides modules for `UEFI` booting and `ACPI 2.0` |
 
 ### Build & Run
 ```bash
