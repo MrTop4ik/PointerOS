@@ -4,7 +4,7 @@
 #include <arch/x86_64/inlineasm.h>
 #include <libc/string.h>
 #include <drivers/serial.h>
-#include <kernel/mm/kmalloc.h>
+#include <mm/kmalloc.h>
 #include <drivers/font8x16.h>
 
 #define LFB_ADDR 0xFFFFFFFFC0000000

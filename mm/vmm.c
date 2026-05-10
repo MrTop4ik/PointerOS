@@ -1,4 +1,4 @@
-#include <kernel/mm/vmm.h>
+#include <mm/vmm.h>
 
 #define MSR_IA32_PAT 0x277
 

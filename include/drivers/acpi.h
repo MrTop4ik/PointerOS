@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <drivers/lfb.h>
 #include <arch/x86_64/inlineasm.h>
-#include <kernel/mm/kmalloc.h>
+#include <mm/kmalloc.h>
 #include <multiboot2.h>
 
 #define LAPIC_VIRT  0xFFFFFFFFFC000000

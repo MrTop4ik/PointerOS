@@ -1,4 +1,4 @@
-#include <kernel/mm/buddy.h>
+#include <mm/buddy.h>
 
 free_block_t *free_areas[MAX_ORDERS + 1];
 page_metadata_t metadata[TOTAL_PAGES];

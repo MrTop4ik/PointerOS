@@ -2,9 +2,9 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <drivers/serial.h>
-#include <kernel/mm/pmm.h>
-#include <kernel/mm/vmm.h>
-#include <kernel/mm/buddy.h>
+#include <mm/pmm.h>
+#include <mm/vmm.h>
+#include <mm/buddy.h>
 
 #define NUM_CACHES 8
 

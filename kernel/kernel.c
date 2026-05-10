@@ -6,7 +6,7 @@
 #include <arch/x86_64/idt.h>
 #include <drivers/pit.h>
 #include <arch/x86_64/inlineasm.h>
-#include <kernel/mm/kmalloc.h>
+#include <mm/kmalloc.h>
 #include <drivers/acpi.h>
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){

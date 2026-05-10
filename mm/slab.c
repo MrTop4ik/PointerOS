@@ -1,4 +1,4 @@
-#include <kernel/mm/slab.h>
+#include <mm/slab.h>
 
 kmem_cache_t kernel_caches[NUM_CACHES];
 

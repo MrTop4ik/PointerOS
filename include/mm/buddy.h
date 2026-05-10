@@ -1,9 +1,9 @@
 #pragma once
 #include <stdint.h>
 #include <drivers/serial.h>
-#include <kernel/mm/pmm.h>
-#include <kernel/mm/vmm.h>
-#include <kernel/mm/kmalloc.h>
+#include <mm/pmm.h>
+#include <mm/vmm.h>
+#include <mm/kmalloc.h>
 
 #define MAX_ORDERS 12
 #define TOTAL_PAGES 4096

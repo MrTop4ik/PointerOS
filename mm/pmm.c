@@ -1,4 +1,4 @@
-#include <kernel/mm/pmm.h>
+#include <mm/pmm.h>
 
 uint8_t* bitmap;
 uint64_t total_pages = 0;

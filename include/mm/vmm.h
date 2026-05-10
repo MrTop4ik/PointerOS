@@ -4,7 +4,7 @@
 #include <libc/string.h>
 #include <drivers/serial.h>
 #include <arch/x86_64/inlineasm.h>
-#include <kernel/mm/pmm.h>
+#include <mm/pmm.h>
 
 #define KERNEL_OFFSET 0xFFFFFFFF80000000
 #define DIRECT_OFFSET 0xFFFF800000000000
