@@ -23,7 +23,7 @@ Already Implemented:
     - **KMAlloc:**
         - **Buddy Allocator** Implemented.
         - **Slab Allocator** Implemented.
-- [ ] **Drivers:** 
+- [x] **Drivers:** 
     - **LFB** Implemented.
     - **QEMU Serial** Implemented.
 

@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <drivers/lfb.h>
 #include <arch/x86_64/inlineasm.h>
+#include <libc/string.h>
 #include <mm/kmalloc.h>
 #include <multiboot2.h>
 
@@ -25,7 +26,7 @@ struct RSDPDescriptor20 {
     uint32_t RsdtAddress;
     uint32_t Length;
     uint64_t XsdtAddress;
-    uint8_t ExtendedChechsum;
+    uint8_t ExtendedChecksum;
     uint8_t Reserved[3];
 }__attribute__((packed));
 
@@ -75,6 +76,9 @@ struct MADT_ISO {
     uint16_t Flags;
 }__attribute__((packed));
 
+extern uint64_t lapic_paddr;
+extern uint64_t ioapic_paddr;
+
 void parse_acpi(unsigned int physBootInfo);
-struct MADT* find_madt(uint64_t xsdt);
+struct MADT* find_madt(uint64_t xsdt_phys);
 void parse_madt(struct MADT *madt);
