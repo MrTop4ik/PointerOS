@@ -4,10 +4,10 @@
 #include <drivers/lfb.h>
 #include <arch/x86_64/gdt.h>
 #include <arch/x86_64/idt.h>
-#include <arch/x86_64/pit.h>
+#include <drivers/pit.h>
 #include <arch/x86_64/inlineasm.h>
 #include <kernel/mm/kmalloc.h>
-#include <arch/x86_64/apic.h>
+#include <drivers/acpi.h>
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
@@ -22,7 +22,7 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
 
     init_LFB(physBootInfo);
 
-    init_APIC(physBootInfo);
+    parse_acpi(physBootInfo);
 
     sti();
 

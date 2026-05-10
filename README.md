@@ -24,7 +24,7 @@ Already Implemented:
         - **Buddy Allocator** Implemented.
         - **Slab Allocator** Implemented.
 - [ ] **Drivers:** 
-    - **LFB** In Progress. 
+    - **LFB** Implemented.
     - **QEMU Serial** Implemented.
 
 ## Getting Started

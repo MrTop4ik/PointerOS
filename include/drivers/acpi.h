@@ -75,6 +75,6 @@ struct MADT_ISO {
     uint16_t Flags;
 }__attribute__((packed));
 
-void init_APIC(unsigned int physBootInfo);
+void parse_acpi(unsigned int physBootInfo);
 struct MADT* find_madt(uint64_t xsdt);
 void parse_madt(struct MADT *madt);

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <arch/x86_64/inlineasm.h>
-#include <arch/x86_64/apic.h>
+#include <drivers/acpi.h>
 #include <drivers/serial.h>
 
 struct idt_entry_struct {
