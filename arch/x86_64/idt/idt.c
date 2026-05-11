@@ -111,6 +111,10 @@ void exception_handler(struct InterruptRegisters *regs){
     if (regs->int_no > 31 && regs->int_no < 48){
         irq_handler(regs);
     }
+
+    if (regs->int_no == 255){
+        lapic_eoi();
+    }
 }
 
 void isr_handler(struct InterruptRegisters *regs){
