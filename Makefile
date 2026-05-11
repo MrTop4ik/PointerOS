@@ -20,7 +20,9 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/slab.c					-o slab.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/kmalloc.c					-o kmalloc.o
 	x86_64-elf-gcc		$(CFLAGS)		-c drivers/acpi.c				-o acpi.o
-	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o
+	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/lapic.c		-o lapic.o
+	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/ioapic.c	-o ioapic.o
+	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o
 	grub-file --is-x86-multiboot2 kernel.bin
 	mv kernel.bin isodir/boot/kernel.bin
 	grub-mkrescue -o kernel.iso isodir

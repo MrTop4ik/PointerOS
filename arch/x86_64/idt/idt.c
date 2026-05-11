@@ -129,10 +129,6 @@ void deleteIRQHandler(uint8_t num){
     irq_handlers[num] = 0;
 }
 
-void lapic_eoi(void){
-    *(volatile uint32_t *)(LAPIC_VIRT + LAPIC_EOI_OFFSET) = 0;
-}
-
 void irq_handler(struct InterruptRegisters *regs){
     void (*handler)(struct InterruptRegisters *regs);
 

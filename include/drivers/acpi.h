@@ -7,16 +7,7 @@
 #include <mm/kmalloc.h>
 #include <multiboot2.h>
 
-#define LAPIC_VIRT  0xFFFFFFFFFC000000
-#define IOAPIC_VIRT 0xFFFFFFFFFC100000
-
-#define LAPIC_EOI_OFFSET 0xB0
-#define LAPIC_SVR_OFFSET 0xF0
-
-#define IA32_APIC_MSR 0x1B
-
-#define LAPIC_SVR_ENABLE (1ULL << 8)
-#define IA32_APIC_ENABLE (1ULL << 11)
+#define MAX_ISO 16
 
 struct RSDPDescriptor20 {
     char Signature[8];
@@ -78,7 +69,9 @@ struct MADT_ISO {
 
 extern uint64_t lapic_paddr;
 extern uint64_t ioapic_paddr;
+extern struct MADT_ISO iso_list[MAX_ISO];
 
 void parse_acpi(unsigned int physBootInfo);
 struct MADT* find_madt(uint64_t xsdt_phys);
 void parse_madt(struct MADT *madt);
+void save_iso(struct MADT_ISO *iso);

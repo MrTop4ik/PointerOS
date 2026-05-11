@@ -1,6 +1,8 @@
 #include <drivers/acpi.h>
 
 uint64_t lapic_paddr, ioapic_paddr;
+uint32_t iso_count = 0;
+struct MADT_ISO iso_list[MAX_ISO];
 
 void parse_acpi(unsigned int physBootInfo){
     struct multiboot_info* virtBootInfo = (struct multiboot_info *)(physBootInfo + DIRECT_OFFSET);
@@ -51,9 +53,15 @@ void parse_madt(struct MADT *madt){
                 break;
             case 2:
                 struct MADT_ISO *iso = (struct MADT_ISO *)entry;
+                save_iso(iso);
                 break;
         }
 
         ptr += entry->Length;
     }
+}
+
+void save_iso(struct MADT_ISO *iso){
+    if (iso_count < MAX_ISO) iso_list[iso_count++] = *iso;
+    else kprintf("To many ISO.\n");
 }

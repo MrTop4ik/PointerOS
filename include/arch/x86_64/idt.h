@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <arch/x86_64/inlineasm.h>
-#include <drivers/acpi.h>
+#include <arch/x86_64/apic/lapic.h>
 #include <drivers/serial.h>
 
 struct idt_entry_struct {
@@ -31,6 +31,5 @@ void setIDTGate(uint8_t vector, uint64_t handler, uint8_t flags, uint8_t ist);
 void exception_handler(struct InterruptRegisters *regs);
 void isr_handler(struct InterruptRegisters *regs);
 void irq_handler(struct InterruptRegisters *regs);
-void lapic_eoi(void);
 void setIRQHandler(uint8_t num, void (*handler)(struct InterruptRegisters *regs));
 void deleteIRQHandler(uint8_t num);
