@@ -8,6 +8,7 @@
 #include <arch/x86_64/inlineasm.h>
 #include <mm/kmalloc.h>
 #include <drivers/acpi.h>
+#include <arch/x86_64/apic/ioapic.h>
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
@@ -23,6 +24,8 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     init_LFB(physBootInfo);
 
     parse_acpi(physBootInfo);
+    init_LAPIC();
+    init_IOAPIC();
 
     sti();
 

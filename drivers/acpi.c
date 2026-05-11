@@ -1,7 +1,7 @@
 #include <drivers/acpi.h>
 
 uint64_t lapic_paddr, ioapic_paddr;
-uint32_t iso_count = 0;
+int iso_count = 0;
 struct MADT_ISO iso_list[MAX_ISO];
 
 void parse_acpi(unsigned int physBootInfo){

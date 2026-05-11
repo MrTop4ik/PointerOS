@@ -69,6 +69,7 @@ struct MADT_ISO {
 
 extern uint64_t lapic_paddr;
 extern uint64_t ioapic_paddr;
+extern int iso_count;
 extern struct MADT_ISO iso_list[MAX_ISO];
 
 void parse_acpi(unsigned int physBootInfo);
