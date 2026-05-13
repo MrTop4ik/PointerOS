@@ -16,3 +16,25 @@ void init_PIT(uint32_t freq){
 void PIT_handler(struct InterruptRegisters *regs){
     ticks++;
 }
+
+void pit_wait_ms(uint32_t ms){
+    uint32_t total_ticks = ms * 1193;
+
+    while (total_ticks > 0){
+        uint16_t wait = (total_ticks > 0xFFFF) ? 0xFFFF : (uint16_t)total_ticks;
+
+        outb(0x43, 0x30);
+        outb(0x40, (uint8_t)wait);
+        outb(0x40, (uint8_t)(wait >> 8));
+
+        uint16_t last = wait;
+        while (1){
+            outb(0x43, 0x00);
+            uint16_t count = inb(0x40) | inb(0x40) << 8;
+            if (count > last || count == 0) break;
+            last = count;
+        }
+
+        total_ticks -= wait;
+    }
+}

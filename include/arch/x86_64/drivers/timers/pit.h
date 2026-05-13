@@ -6,3 +6,4 @@
 
 void init_PIT(uint32_t freq);
 void PIT_handler(struct InterruptRegisters *regs);
+void pit_wait_ms(uint32_t ms);

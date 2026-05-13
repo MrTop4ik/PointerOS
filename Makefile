@@ -3,26 +3,27 @@ AFLAGS = -f elf64
 QEMUFLAGS = -d int -D logs/qemu.log -m 4096 -machine q35,acpi=on -bios /usr/share/ovmf/OVMF.fd -serial stdio -display gtk
 
 iso:
-	nasm 				$(AFLAGS) 		   arch/x86_64/boot/boot.s				-o boot.o
-	nasm				$(AFLAGS)		   arch/x86_64/gdt/gdt.s				-o gdt.o
-	nasm				$(AFLAGS)		   arch/x86_64/idt/idt.s				-o idt.o
-	x86_64-elf-gcc 		$(CFLAGS)		-c kernel/kernel.c						-o kernel.o
-	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/gdt/gdt.c				-o gdts.o
-	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/idt/idt.c				-o idts.o
-	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/inlineasm.c				-o inlineasm.o
-	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/timers/pit.c		-o pit.o
-	x86_64-elf-gcc		$(CFLAGS)		-c libc/string.c						-o string.o
-	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/video//serial.c	-o serial.o
-	x86_64-elf-gcc		$(CFLAGS)		-c drivers/lfb/lfb.c					-o lfb.o
-	x86_64-elf-gcc		$(CFLAGS)		-c mm/pmm.c 							-o pmm.o
-	x86_64-elf-gcc		$(CFLAGS)		-c mm/vmm.c								-o vmm.o
-	x86_64-elf-gcc		$(CFLAGS)		-c mm/buddy.c							-o buddy.o
-	x86_64-elf-gcc		$(CFLAGS)		-c mm/slab.c							-o slab.o
-	x86_64-elf-gcc		$(CFLAGS)		-c mm/kmalloc.c							-o kmalloc.o
-	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/apic/acpi.c				-o acpi.o
-	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/lapic.c				-o lapic.o
-	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/ioapic.c			-o ioapic.o
-	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o
+	nasm 				$(AFLAGS) 		   arch/x86_64/boot/boot.s						-o boot.o
+	nasm				$(AFLAGS)		   arch/x86_64/gdt/gdt.s						-o gdt.o
+	nasm				$(AFLAGS)		   arch/x86_64/idt/idt.s						-o idt.o
+	x86_64-elf-gcc 		$(CFLAGS)		-c kernel/kernel.c								-o kernel.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/gdt/gdt.c						-o gdts.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/idt/idt.c						-o idts.o
+	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/inlineasm.c						-o inlineasm.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/timers/pit.c				-o pit.o
+	x86_64-elf-gcc		$(CFLAGS)		-c libc/string.c								-o string.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/video//serial.c			-o serial.o
+	x86_64-elf-gcc		$(CFLAGS)		-c drivers/lfb/lfb.c							-o lfb.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/pmm.c 									-o pmm.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/vmm.c										-o vmm.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/buddy.c									-o buddy.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/slab.c									-o slab.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/kmalloc.c									-o kmalloc.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/apic/acpi.c						-o acpi.o
+	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/lapic.c						-o lapic.o
+	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/ioapic.c					-o ioapic.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/timers/lapic_timer.c		-o lapic_timer.o
+	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o lapic_timer.o
 	grub-file --is-x86-multiboot2 kernel.bin
 	mv kernel.bin isodir/boot/kernel.bin
 	grub-mkrescue -o kernel.iso isodir
