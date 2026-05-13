@@ -1,4 +1,5 @@
-#include <drivers/serial.h>
+#include <arch/x86_64/drivers/video/serial.h>
+
 char * itoa(int value, char * str, int base){
     char * rc;
     char * ptr;

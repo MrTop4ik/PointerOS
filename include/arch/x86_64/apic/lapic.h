@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
-#include <drivers/acpi.h>
+#include <arch/x86_64/apic/acpi.h>
 #include <mm/kmalloc.h>
 #include <arch/x86_64/inlineasm.h>
 

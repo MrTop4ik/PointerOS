@@ -1,4 +1,4 @@
-#include <drivers/acpi.h>
+#include <arch/x86_64/apic/acpi.h>
 
 uint64_t lapic_paddr, ioapic_paddr;
 int iso_count = 0;

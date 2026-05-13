@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <multiboot2.h>
 #include <libc/string.h>
-#include <drivers/serial.h>
+#include <arch/x86_64/drivers/video/serial.h>
 #include <arch/x86_64/inlineasm.h>
 #include <mm/pmm.h>
 

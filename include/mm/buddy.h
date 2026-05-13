@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-#include <drivers/serial.h>
+#include <arch/x86_64/drivers/video/serial.h>
 #include <mm/pmm.h>
 #include <mm/vmm.h>
 #include <mm/kmalloc.h>
