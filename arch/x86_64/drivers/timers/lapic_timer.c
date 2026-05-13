@@ -13,8 +13,6 @@ void init_lapic_timer(uint8_t vector, uint32_t ms){
     uint32_t ticks_in_10ms = 0xFFFFFFFF - current;
     uint32_t ticks_per_ms = ticks_in_10ms / 10;
 
-    kprintf("%llx", ticks_per_ms);
-
     if (ticks_per_ms * ms > 0xFFFFFFFF) kprintf("Ticks per %dms > 0xFFFFFFFF\n");
 
     write_lapic(LAPIC_TIMER_LVT, vector | LAPIC_TIMER_PERIODIC);

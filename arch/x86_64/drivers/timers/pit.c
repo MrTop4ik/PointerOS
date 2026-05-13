@@ -2,15 +2,19 @@
 
 volatile uint64_t ticks;
 
+uint32_t division = 0;
+
 void init_PIT(uint32_t freq){
     ticks = 0;
-    uint32_t division = 1193180 / freq;
+    division = 1193180 / freq;
 
     setIRQHandler(0, &PIT_handler);
     
     outb(0x43, 0x36);
     outb(0x40, (uint8_t)(division & 0xFF));
     outb(0x40, (uint8_t)((division >> 8) & 0xFF));
+
+    ioapic_set_irq(0, 32, 0);
 }
 
 void PIT_handler(struct InterruptRegisters *regs){
@@ -37,4 +41,8 @@ void pit_wait_ms(uint32_t ms){
 
         total_ticks -= wait;
     }
+
+    outb(0x43, 0x36);
+    outb(0x40, (uint8_t)(division & 0xFF));
+    outb(0x40, (uint8_t)((division >> 8) & 0xFF));
 }

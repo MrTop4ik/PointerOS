@@ -16,7 +16,6 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
     init_GDT();
     init_IDT();
-    init_PIT(10);
 
     init_PMM(physBootInfo);
     init_VMM(physBootInfo);
@@ -29,6 +28,7 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     init_LAPIC();
     init_IOAPIC();
 
+    init_PIT(10);
     init_lapic_timer(0xEF, 10);
 
     sti();
