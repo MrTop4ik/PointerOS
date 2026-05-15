@@ -116,8 +116,6 @@ IRQ 13, 45
 IRQ 14, 46
 IRQ 15, 47
 
-IRQ 16, 0xEF
-
 global isr_stub_table
 
 isr_stub_table:

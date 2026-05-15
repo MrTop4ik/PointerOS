@@ -18,8 +18,3 @@ void init_lapic_timer(uint8_t vector, uint32_t ms){
     write_lapic(LAPIC_TIMER_LVT, vector | LAPIC_TIMER_PERIODIC);
     write_lapic(LAPIC_TIMER_INITCNT, (uint32_t)(ticks_per_ms * ms));
 }
-
-void lapic_timer_handler(void *regs){
-    lapic_timer_ticks++;
-    lapic_eoi();
-}

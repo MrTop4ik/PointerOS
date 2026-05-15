@@ -6,6 +6,8 @@ iso:
 	nasm 				$(AFLAGS) 		   arch/x86_64/boot/boot.s						-o boot.o
 	nasm				$(AFLAGS)		   arch/x86_64/gdt/gdt.s						-o gdt.o
 	nasm				$(AFLAGS)		   arch/x86_64/idt/idt.s						-o idt.o
+	nasm				$(AFLAGS)		   arch/x86_64/drivers/timers/lapic_timer.s		-o lapic_timer.o
+	nasm 				$(AFLAGS) 		   kernel/thread.s								-o thread.o
 	x86_64-elf-gcc 		$(CFLAGS)		-c kernel/kernel.c								-o kernel.o
 	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/gdt/gdt.c						-o gdts.o
 	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/idt/idt.c						-o idts.o
@@ -19,11 +21,14 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/buddy.c									-o buddy.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/slab.c									-o slab.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/kmalloc.c									-o kmalloc.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/stack.c									-o stack.o
 	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/apic/acpi.c						-o acpi.o
 	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/lapic.c						-o lapic.o
 	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/ioapic.c					-o ioapic.o
-	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/timers/lapic_timer.c		-o lapic_timer.o
-	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o lapic_timer.o
+	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/drivers/timers/lapic_timer.c		-o lapic_timers.o
+	x86_64-elf-gcc		$(CFLAGS)		-c kernel/thread.c								-o threads.o
+	x86_64-elf-gcc		$(CFLAGS)		-c kernel/scheduler.c							-o scheduler.o
+	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o lapic_timer.o lapic_timers.o thread.o threads.o scheduler.o stack.o
 	grub-file --is-x86-multiboot2 kernel.bin
 	mv kernel.bin isodir/boot/kernel.bin
 	grub-mkrescue -o kernel.iso isodir

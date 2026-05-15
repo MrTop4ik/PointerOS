@@ -2,8 +2,9 @@
 
 extern void* isr_stub_table[];
 extern void* irq_stub_table[];
+extern void* lapic_timer_handler();
+extern void* yield_handler();
 extern void* isr255();
-extern void* irq16();
 
 char *exceptions[] = {
     "Division By Zero.",
@@ -89,7 +90,8 @@ void init_IDT(void){
         setIDTGate(vector, (uint64_t)irq_stub_table[vector - 32], 0x8E, 0);
     }
 
-    setIDTGate(0xEF, (uint64_t)irq16, 0x8E, 0);
+    setIDTGate(0x81, (uint64_t)yield_handler, 0x8E, 0);
+    setIDTGate(0xEF, (uint64_t)lapic_timer_handler, 0x8E, 0);
     setIDTGate(255, (uint64_t)isr255, 0x8E, 0);
 
     __asm__ volatile ("lidt %0" : : "m" (idt_ptr));
@@ -112,10 +114,6 @@ void exception_handler(struct InterruptRegisters *regs){
 
     if (regs->int_no > 31 && regs->int_no < 48){
         irq_handler(regs);
-    }
-
-    if (regs->int_no == 0xEF){
-        lapic_timer_handler(regs);
     }
 
     if (regs->int_no == 255){

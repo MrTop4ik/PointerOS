@@ -1,0 +1,11 @@
+#pragma once
+#include <stdint.h>
+#include <stddef.h>
+#include <mm/stack.h>
+#include <arch/x86_64/idt.h>
+#include <arch/x86_64/inlineasm.h>
+#include <kernel/thread.h>
+#include <arch/x86_64/apic/lapic.h>
+
+void init_scheduler(void);
+uint64_t scheduler_handler(uint64_t old_rsp);

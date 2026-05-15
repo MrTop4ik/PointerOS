@@ -1,0 +1,35 @@
+#pragma once
+#include <stdint.h>
+#include <stddef.h>
+#include <mm/stack.h>
+#include <arch/x86_64/idt.h>
+#include <drivers/lfb.h>
+
+typedef enum {
+    READY = 0,
+    RUNNING,
+    DEAD
+} thread_state_t;
+
+typedef struct thread {
+    uint64_t rsp;
+    uint64_t tid;
+    thread_state_t state;
+    void *stack_bottom;
+    struct thread *prev;
+    struct thread *next;
+} thread_t;
+
+extern uint64_t next_thread_id;
+extern thread_t *current_thread;
+extern thread_t *ready_list_head;
+extern thread_t *dead_list_head;
+
+thread_t *create_thread(void (*entry_pointer)(void), size_t stack_size);
+void destroy_thread(thread_t *t);
+void thread_exit(void);
+void enqueue_thread(thread_t *t);
+void dequeue_thread(thread_t *t);
+void yield(void);
+void cleanup_dead_threads(void);
+void idle_thread_entry(void);

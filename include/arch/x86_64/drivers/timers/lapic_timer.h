@@ -20,4 +20,3 @@
 extern uint64_t lapic_timer_ticks;
 
 void init_lapic_timer(uint8_t vector, uint32_t ms);
-void lapic_timer_handler(void *regs);
