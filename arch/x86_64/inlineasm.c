@@ -35,6 +35,16 @@ void write_msr(uint32_t index, uint32_t low, uint32_t high){
     __asm__ volatile ("wrmsr" : : "a"(low), "d"(high), "c"(index));
 }
 
+uint64_t read_rsp(void){
+    uint64_t rsp;
+    __asm__ volatile ("mov %%rsp, %0" : "=r"(rsp));
+    return rsp; 
+}
+
+void yield(void){
+    __asm__ volatile ("int $0x81");
+}
+
 void sti(void){
     __asm__ volatile ("sti");
 }

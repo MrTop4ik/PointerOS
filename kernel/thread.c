@@ -10,15 +10,23 @@ thread_t *create_thread(void (*entry_point)(void), size_t stack_size){
     thread_t *t = (thread_t *)kmalloc(sizeof(thread_t));
     if (!t) return NULL;
 
-    uint64_t *stack_top = (uint64_t *)alloc_stack(stack_size);
-    if (!stack_top) return NULL;
+    void *stack_mem = alloc_stack(stack_size);
+    if (!stack_mem) {
+        kfree(t);
+        return NULL;
+    }
 
-    t->stack_bottom = (void *)(stack_top - stack_size);
+    t->stack_bottom = stack_mem;
+
+    uint64_t *stack_top = (uint64_t*)((uint64_t)stack_mem + stack_size);
+    stack_top = (uint64_t*)((uint64_t)stack_top & ~15UL);
 
     stack_top--; *stack_top = (uint64_t)&thread_exit;
 
+    uint64_t *clean_stack_top = stack_top;
+
     stack_top--; *stack_top = 0x10;
-    stack_top--; *stack_top = (uint64_t)(stack_top + 1);
+    stack_top--; *stack_top = (uint64_t)clean_stack_top;
     stack_top--; *stack_top = 0x202;
     stack_top--; *stack_top = 0x08;
     stack_top--; *stack_top = (uint64_t)entry_point;
@@ -45,7 +53,7 @@ void destroy_thread(thread_t *t){
 }
 
 void thread_exit(void){
-    __asm__ volatile ("cli");
+    cli();
     current_thread->state = DEAD;
     yield();
 }
@@ -74,17 +82,13 @@ void dequeue_thread(thread_t *t){
     t->next = t->prev = NULL;
 }
 
-void yield(void){
-    __asm__ volatile ("int $0x81");
-}
-
 void cleanup_dead_threads(void){\
-    __asm__ volatile ("cli");
+    cli();
 
     thread_t *t = dead_list_head;
     dead_list_head = NULL;
     
-    __asm__ volatile ("sti");
+    sti();
 
     while (t){
         thread_t *next_dead = t->next;
@@ -96,6 +100,6 @@ void cleanup_dead_threads(void){\
 void idle_thread_entry(void){
     while (1){
         cleanup_dead_threads();
-        __asm__ volatile ("hlt");
+        hlt();
     }
 }

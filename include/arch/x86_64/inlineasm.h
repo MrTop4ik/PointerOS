@@ -8,6 +8,8 @@ uint64_t read_cr3(void);
 void write_cr3(uint64_t paddr);
 void read_msr(uint32_t index, uint32_t *l, uint32_t *h);
 void write_msr(uint32_t index, uint32_t low, uint32_t high);
+uint64_t read_rsp(void);
+void yield(void);
 void sti(void);
 void cli(void);
 void hlt(void);

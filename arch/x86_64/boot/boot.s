@@ -148,7 +148,7 @@ _start:
     or eax, 0b11
     mov [pdpt_kernel + 510 * 8], eax
     
-    mov ecx, 0
+    xor ecx, ecx
 .map_kernel_loop:
     mov eax, 0x200000
     mul ecx

@@ -6,5 +6,5 @@ void *alloc_stack(size_t size){
     void *stack_bottom = kmalloc(size);
     if (!stack_bottom) return NULL;
 
-    return (uint8_t*)stack_bottom + size;
+    return stack_bottom;
 }
