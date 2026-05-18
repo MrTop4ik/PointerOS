@@ -12,21 +12,22 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 * **Bootloader:** GRUB (Multiboot2)
 
 ## Current Features
-Already Implemented:
-- [x] **GDT:** Global Descriptor Table configured.
-- [x] **IDT** Interrupt Descriptor Table configured.
+- [x] **GDT:** Configured.
+- [x] **IDT:** Configured.
 - [x] **Paging:** 64-bit Paging Enabled.
 - [x] **Higher Half Kernel:** Implemeted.
 - [x] **KMemory Allocation:**
     - **PMM** Implemented.
     - **VMM** Implemented.
-    - **KMAlloc:**
-        - **Buddy Allocator** Implemented.
-        - **Slab Allocator** Implemented.
+    - **Buddy Allocator** Implemented.
+    - **Slab Allocator** Implemented.
 - [x] **Drivers:** 
     - **LFB** Implemented.
     - **QEMU Serial** Implemented.
-
+    - **PIT** Implemented.
+    - **LAPIC Timer** Implemented.
+- [x] **Scheduler:**
+    - **Multithreading** Implemented.
 ## Getting Started
 
 ### Prerequisites
