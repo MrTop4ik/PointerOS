@@ -1,4 +1,4 @@
-#include <kernel/thread.h>
+#include <kernel/scheduler/thread.h>
 
 uint64_t next_thread_id = 0;
 

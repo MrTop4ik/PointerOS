@@ -4,7 +4,7 @@
 #include <mm/stack.h>
 #include <arch/x86_64/idt.h>
 #include <arch/x86_64/inlineasm.h>
-#include <kernel/thread.h>
+#include <kernel/scheduler/thread.h>
 #include <arch/x86_64/apic/lapic.h>
 
 void init_scheduler(void);

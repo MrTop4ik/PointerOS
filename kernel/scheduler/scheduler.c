@@ -1,4 +1,4 @@
-#include <kernel/scheduler.h>
+#include <kernel/scheduler/scheduler.h>
 
 void init_scheduler(void){
     thread_t *main_thread = (thread_t *)kmalloc(sizeof(thread_t));
