@@ -1,4 +1,4 @@
-# PointerOS: A 64-bit x86 Hobby Kernel
+# PointerOS: A 64-bit x86 Hobby Operating System
 
 A hobby operating system kernel written from scratch in **C** and **x86 Assembly**.
 
