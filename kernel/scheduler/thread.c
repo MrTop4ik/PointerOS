@@ -82,7 +82,7 @@ void dequeue_thread(thread_t *t){
     t->next = t->prev = NULL;
 }
 
-void cleanup_dead_threads(void){\
+void cleanup_dead_threads(void){
     cli();
 
     thread_t *t = dead_list_head;
@@ -99,7 +99,12 @@ void cleanup_dead_threads(void){\
 
 void idle_thread_entry(void){
     while (1){
+        kprintf("Thread 2\n");
         cleanup_dead_threads();
         hlt();
     }
+}
+
+void third_thread(void){
+    for (int i = 0; i < 5; i++) kprintf("Thread 3\n");
 }

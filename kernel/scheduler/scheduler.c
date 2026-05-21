@@ -11,6 +11,7 @@ void init_scheduler(void){
     current_thread = main_thread;
 
     create_thread(&idle_thread_entry, 0x1000);
+    create_thread(&third_thread, 0x1000);
 }
 
 uint64_t scheduler_handler(uint64_t old_rsp){
