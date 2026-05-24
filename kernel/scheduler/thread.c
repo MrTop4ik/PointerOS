@@ -99,7 +99,6 @@ void cleanup_dead_threads(void){
 
 void idle_thread_entry(void){
     while (1){
-        kprintf("Thread 2\n");
         cleanup_dead_threads();
         hlt();
     }
