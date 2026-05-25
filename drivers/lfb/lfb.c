@@ -105,6 +105,8 @@ void kputnum(uint32_t num, uint32_t base){
 }
 
 void kprintf(const char* format, ...){
+    cli();
+    
     va_list args;
     va_start(args, format);
 
@@ -117,7 +119,8 @@ void kprintf(const char* format, ...){
         p++;
         switch (*p) {
             case 's':
-                kprintf(va_arg(args, char*));
+                char *s = va_arg(args, char *);
+                while (*s) kputchar(*s++);
                 break;
             case 'd': {
                 int i = va_arg(args, int);
@@ -172,4 +175,6 @@ void kprintf(const char* format, ...){
     va_end(args);
 
     lfb_swap();
+
+    sti();
 }

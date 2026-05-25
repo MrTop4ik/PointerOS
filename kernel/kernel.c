@@ -36,5 +36,7 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
 
     sti();
 
-    for (;;) { kprintf("Thread 1\n"); kprintf("Still Thread 1\n");}
+    kprintf("[Thread 1] Hello, World!\n");
+
+    for (;;);
 }

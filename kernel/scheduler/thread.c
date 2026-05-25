@@ -105,5 +105,5 @@ void idle_thread_entry(void){
 }
 
 void third_thread(void){
-    for (int i = 0; i < 5; i++) kprintf("Thread 3\n");
+    for (int i = 0; i < 5; i++) kprintf("[Thread 3] World, Hello!\n");
 }
