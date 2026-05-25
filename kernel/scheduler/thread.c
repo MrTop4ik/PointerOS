@@ -11,7 +11,7 @@ thread_t *create_thread(void (*entry_point)(void), size_t stack_size){
     if (!t) return NULL;
 
     void *stack_mem = alloc_stack(stack_size);
-    if (!stack_mem) {
+    if (!stack_mem){
         kfree(t);
         return NULL;
     }
