@@ -6,6 +6,7 @@
 #include <arch/x86_64/drivers/video/serial.h>
 #include <mm/kmalloc.h>
 #include <drivers/font8x16.h>
+#include <kernel/spinlock.h>
 
 #define LFB_ADDR 0xFFFFFFFFC0000000
 

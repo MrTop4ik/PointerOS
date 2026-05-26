@@ -2,6 +2,8 @@
 
 framebuffer_t lfb;
 
+spinlock_t kprintf_lock = {0};
+
 void init_LFB(unsigned int physBootInfo){
     struct multiboot_info *virtBootInfo = (struct multiboot_info *)(physBootInfo + KERNEL_OFFSET);
 
@@ -105,7 +107,7 @@ void kputnum(uint32_t num, uint32_t base){
 }
 
 void kprintf(const char* format, ...){
-    cli();
+    uint64_t rflags = spin_lock_irqsave(&kprintf_lock);
     
     va_list args;
     va_start(args, format);
@@ -176,5 +178,5 @@ void kprintf(const char* format, ...){
 
     lfb_swap();
 
-    sti();
+    spin_lock_irqrestore(&kprintf_lock, rflags);
 }
