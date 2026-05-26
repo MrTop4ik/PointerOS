@@ -36,7 +36,7 @@ uint64_t scheduler_handler(uint64_t old_rsp){
     while (next_thread->state != READY && next_thread->state != RUNNING){
         next_thread = next_thread->next;
         if (next_thread == starting_point){
-            if (old_thread->state == DEAD) for(;;) kprintf("Panic");
+            if (old_thread->state == DEAD) for(;;);
             old_thread->state = RUNNING;
             return old_rsp;
         }

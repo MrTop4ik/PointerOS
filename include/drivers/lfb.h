@@ -30,6 +30,7 @@ void lfb_swap(void);
 void lfb_scroll(void);
 void putpixel(int x, int y, uint32_t color);
 void draw_char_at(int x, int y, char c, uint32_t fb, uint32_t bg);
+void kputchar_direct(char c);
 void kputchar(char c);
 void kputnum(uint32_t num, uint32_t base);
 void kprintf(const char* format, ...);

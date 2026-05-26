@@ -66,7 +66,7 @@ void draw_char_at(int x, int y, char c, uint32_t fg, uint32_t bg){
     }
 }
 
-void kputchar(char c){
+void kputchar_direct(char c){
     if (c == '\n'){
         lfb.cursor_x = 0;
         lfb.cursor_y += lfb.char_height;
@@ -86,13 +86,18 @@ void kputchar(char c){
     }
 }
 
+void kputchar(char c){
+    kputchar_direct(c);
+    lfb_swap();
+}
+
 void kputnum(uint32_t num, uint32_t base){
     char buf[32];
     int i = 0;
     const char digits[] = "0123456789abcdef";
 
     if (num == 0) {
-        kputchar('0');
+        kputchar_direct('0');
         return;
     }
 
@@ -101,9 +106,7 @@ void kputnum(uint32_t num, uint32_t base){
         num /= base;
     }
 
-    while (i > 0) {
-        kputchar(buf[--i]);
-    }
+    while (i > 0) kputchar_direct(buf[--i]);
 }
 
 void kprintf(const char* format, ...){
@@ -114,7 +117,7 @@ void kprintf(const char* format, ...){
 
     for (const char* p = format; *p != '\0'; p++) {
         if (*p != '%') {
-            kputchar(*p);
+            kputchar_direct(*p);
             continue;
         }
 
@@ -122,12 +125,12 @@ void kprintf(const char* format, ...){
         switch (*p) {
             case 's':
                 char *s = va_arg(args, char *);
-                while (*s) kputchar(*s++);
+                while (*s) kputchar_direct(*s++);
                 break;
             case 'd': {
                 int i = va_arg(args, int);
                 if (i < 0) {
-                    kputchar('-');
+                    kputchar_direct('-');
                     i = -i;
                 }
                 kputnum((uint32_t)i, 10);
@@ -135,8 +138,8 @@ void kprintf(const char* format, ...){
             }
             case 'x': {
                 uint32_t x = va_arg(args, uint32_t);
-                kputchar('0');
-                kputchar('x');
+                kputchar_direct('0');
+                kputchar_direct('x');
                 kputnum(x, 16);
                 break;
             }
@@ -145,11 +148,11 @@ void kprintf(const char* format, ...){
                     p += 2;
                     uint64_t val = va_arg(args, uint64_t);
 
-                    kputchar('0');
-                    kputchar('x');
+                    kputchar_direct('0');
+                    kputchar_direct('x');
                     
                     if (val == 0) {
-                        kputchar('0');
+                        kputchar_direct('0');
                     } else {
                         char buf[16];
                         int i = 0;
@@ -159,18 +162,18 @@ void kprintf(const char* format, ...){
                             val /= 16;
                         }
                         while (i > 0) {
-                            kputchar(buf[--i]);
+                            kputchar_direct(buf[--i]);
                         }
                     }
                 }
                 break;
             case 'p':
-                kputchar('0');
-                kputchar('x');
+                kputchar_direct('0');
+                kputchar_direct('x');
                 kputnum(va_arg(args, uint32_t), 16);
                 break;
             case '%':
-                kputchar('%');
+                kputchar_direct('%');
                 break;
         }
     }
