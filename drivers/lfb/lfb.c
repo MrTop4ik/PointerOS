@@ -2,8 +2,6 @@
 
 framebuffer_t lfb;
 
-spinlock_t kprintf_lock = {0};
-
 void init_LFB(unsigned int physBootInfo){
     struct multiboot_info *virtBootInfo = (struct multiboot_info *)(physBootInfo + KERNEL_OFFSET);
 
@@ -21,9 +19,7 @@ void init_LFB(unsigned int physBootInfo){
         tag = (struct multiboot_tag *)((uintptr_t)((uint8_t*)tag + tag->size + 7) & ~7);
     }
 
-    for (int size = 0; size < lfb.size; size += PAGE_SIZE_2MB){
-        vmm_map_page(read_cr3(), lfb.paddr + size, size + LFB_ADDR, PAGE_SIZE_2MB, (PTE_WRITABLE | PTE_WC_HUGE));
-    }
+    for (int size = 0; size < lfb.size; size += PAGE_SIZE_2MB) vmm_map_page(read_cr3(), lfb.paddr + size, size + LFB_ADDR, PAGE_SIZE_2MB, (PTE_WRITABLE | PTE_WC_HUGE));
 
     lfb.vram = (uint32_t *)LFB_ADDR;
     lfb.buffer = kmalloc(lfb.size);
@@ -35,6 +31,9 @@ void init_LFB(unsigned int physBootInfo){
     lfb.cursor_y = 0;
 
     memset(lfb.buffer, 0, lfb.size);
+
+    init_klog();
+
     lfb_swap();
 }
 
@@ -91,17 +90,17 @@ void kputchar(char c){
     lfb_swap();
 }
 
-void kputnum(uint32_t num, uint32_t base){
+void kputnum_direct(uint32_t num, uint32_t base){
     char buf[32];
     int i = 0;
     const char digits[] = "0123456789abcdef";
 
-    if (num == 0) {
+    if (num == 0){
         kputchar_direct('0');
         return;
     }
 
-    while (num > 0) {
+    while (num > 0){
         buf[i++] = digits[num % base];
         num /= base;
     }
@@ -109,15 +108,40 @@ void kputnum(uint32_t num, uint32_t base){
     while (i > 0) kputchar_direct(buf[--i]);
 }
 
+static int local_putnum(char *buf, uint32_t max_len, uint64_t num, uint32_t base){
+    int i = 0;
+    const char digits[] = "0123456789abcdef";
+
+    if (num == 0 && max_len > 0){
+        buf[i++] = '0';
+        return i;
+    }
+
+    char temp[64];
+    int j = 0;
+
+    while (num > 0 && j < 64){
+        temp[j++] = digits[num % base];
+        num /= base;
+    }
+
+    while (j > 0 && i < max_len) buf[j++] = temp[i--];
+
+    return i;
+}
+
 void kprintf(const char* format, ...){
-    uint64_t rflags = spin_lock_irqsave(&kprintf_lock);
-    
+    char local_buf[KPRINTF_BUF_MAX];
+    int idx = 0;
+
     va_list args;
     va_start(args, format);
 
-    for (const char* p = format; *p != '\0'; p++) {
+    for (const char* p = format; *p != '\0'; p++){
+        CHECK_AND_FLUSH();
+
         if (*p != '%') {
-            kputchar_direct(*p);
+            local_buf[idx++] = *p;
             continue;
         }
 
@@ -125,61 +149,77 @@ void kprintf(const char* format, ...){
         switch (*p) {
             case 's':
                 char *s = va_arg(args, char *);
-                while (*s) kputchar_direct(*s++);
+                while (*s){
+                    CHECK_AND_FLUSH();
+                    local_buf[idx++] = *s++;
+                }
                 break;
             case 'd': {
                 int i = va_arg(args, int);
+
                 if (i < 0) {
-                    kputchar_direct('-');
+                    CHECK_AND_FLUSH();
+                    local_buf[idx++] = '-';
                     i = -i;
                 }
-                kputnum((uint32_t)i, 10);
+
+                if (idx > KPRINTF_BUF_MAX - 35){
+                    klog_write(local_buf, idx);
+                    idx = 0;
+                }
+
+                idx += local_putnum(&local_buf[idx], KPRINTF_BUF_MAX - 1, (uint64_t)i, 10);
                 break;
             }
             case 'x': {
-                uint32_t x = va_arg(args, uint32_t);
-                kputchar_direct('0');
-                kputchar_direct('x');
-                kputnum(x, 16);
+                uint32_t i = va_arg(args, uint32_t);
+
+                CHECK_AND_FLUSH(); local_buf[idx++] = '0';
+                CHECK_AND_FLUSH(); local_buf[idx++] = 'x';
+
+                if (idx > KPRINTF_BUF_MAX - 35){
+                    klog_write(local_buf, idx);
+                    idx = 0;
+                }
+
+                idx += local_putnum(&local_buf[idx], KPRINTF_BUF_MAX - 1, (uint64_t)i, 16);
                 break;
             }
             case 'l':
                 if (*(p+1) == 'l' && *(p+2) == 'x') {
                     p += 2;
-                    uint64_t val = va_arg(args, uint64_t);
+                    uint64_t i = va_arg(args, uint64_t);
 
-                    kputchar_direct('0');
-                    kputchar_direct('x');
+                    CHECK_AND_FLUSH(); local_buf[idx++] = '0';
+                    CHECK_AND_FLUSH(); local_buf[idx++] = 'x';
                     
-                    if (val == 0) {
-                        kputchar_direct('0');
-                    } else {
-                        char buf[16];
-                        int i = 0;
-                        while (val > 0) {
-                            uint32_t rem = val % 16;
-                            buf[i++] = (rem < 10) ? (rem + '0') : (rem - 10 + 'a');
-                            val /= 16;
-                        }
-                        while (i > 0) {
-                            kputchar_direct(buf[--i]);
-                        }
+                    if (idx > KPRINTF_BUF_MAX - 35){
+                        klog_write(local_buf, idx);
+                        idx = 0;
                     }
+
+                    idx += local_putnum(&local_buf[idx], KPRINTF_BUF_MAX - 1, (uint64_t)i, 16);
                 }
                 break;
             case 'p':
-                kputchar_direct('0');
-                kputchar_direct('x');
-                kputnum(va_arg(args, uint32_t), 16);
+                uint64_t i = va_arg(args, uint64_t);
+
+                CHECK_AND_FLUSH(); local_buf[idx++] = '0';
+                CHECK_AND_FLUSH(); local_buf[idx++] = 'x';
+
+                if (idx > KPRINTF_BUF_MAX - 35){
+                    klog_write(local_buf, idx);
+                    idx = 0;
+                }
+
+                idx += local_putnum(&local_buf[idx], KPRINTF_BUF_MAX - 1, (uint64_t)i, 16);
                 break;
             case '%':
-                kputchar_direct('%');
+                local_buf[idx++] = '%';
                 break;
         }
     }
     va_end(args);
 
-    lfb_swap();
-
-    spin_lock_irqrestore(&kprintf_lock, rflags);
+    if (idx > 0) klog_write(local_buf, idx);
 }

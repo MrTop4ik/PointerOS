@@ -7,8 +7,18 @@
 #include <mm/kmalloc.h>
 #include <drivers/font8x16.h>
 #include <kernel/spinlock.h>
+#include <drivers/klog.h>
 
 #define LFB_ADDR 0xFFFFFFFFC0000000
+
+#define KPRINTF_BUF_MAX 256
+
+#define CHECK_AND_FLUSH() do { \
+    if (idx >= KPRINTF_BUF_MAX - 1){ \
+        klog_write(local_buf, idx); \
+        idx = 0; \
+    } \
+} while (0)
 
 typedef struct framebuffer_struct {
     uint32_t *vram;
@@ -32,5 +42,5 @@ void putpixel(int x, int y, uint32_t color);
 void draw_char_at(int x, int y, char c, uint32_t fb, uint32_t bg);
 void kputchar_direct(char c);
 void kputchar(char c);
-void kputnum(uint32_t num, uint32_t base);
+void kputnum_direct(uint32_t num, uint32_t base);
 void kprintf(const char* format, ...);

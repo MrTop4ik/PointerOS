@@ -5,6 +5,7 @@
 #include <arch/x86_64/idt.h>
 #include <drivers/lfb.h>
 #include <arch/x86_64/inlineasm.h>
+#include <drivers/klog.h>
 
 typedef enum {
     READY = 0,
