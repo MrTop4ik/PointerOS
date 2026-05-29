@@ -1,5 +1,7 @@
 #include <kernel/scheduler/scheduler.h>
 
+volatile int scheduler = 0;
+
 void init_scheduler(void){
     thread_t *main_thread = (thread_t *)kmalloc(sizeof(thread_t));
     main_thread->tid = 0;
@@ -12,6 +14,8 @@ void init_scheduler(void){
 
     create_thread(&idle_thread_entry, 0x1000);
     create_thread(&third_thread, 0x1000);
+
+    scheduler = 1;
 }
 
 uint64_t scheduler_handler(uint64_t old_rsp){

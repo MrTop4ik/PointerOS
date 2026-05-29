@@ -1,5 +1,7 @@
 #include <mm/kmalloc.h>
 
+static spinlock_t kmalloc_lock = {0};
+
 void init_kheap(void){
     for (uint64_t vaddr = HEAP_START; vaddr < HEAP_START + HEAP_SIZE; vaddr += PAGE_SIZE_4KB){
         uint64_t paddr = pmm_alloc_page();
@@ -13,6 +15,10 @@ void init_kheap(void){
 void *kmalloc(size_t size){
     if (size == 0) return NULL;
 
+    uint64_t rflags;
+
+    if (scheduler) rflags = spin_lock_irqsave(&kmalloc_lock);
+
     if (size > 2048){
         int order = 0;
         size_t s = PAGE_SIZE_4KB;
@@ -22,13 +28,19 @@ void *kmalloc(size_t size){
             order++;
         }
 
+        if (scheduler) spin_lock_irqrestore(&kmalloc_lock, rflags);
+
         return buddy_alloc(order);
     }
 
     for (int i = 0; i < NUM_CACHES; i++){
-        if (size <= kernel_caches[i].obj_size) return slab_alloc(&kernel_caches[i]);
+        if (size <= kernel_caches[i].obj_size){
+            if (scheduler) spin_lock_irqrestore(&kmalloc_lock, rflags);
+            return slab_alloc(&kernel_caches[i]);
+        }
     }
 
+    if (scheduler) spin_lock_irqrestore(&kmalloc_lock, rflags);
     return NULL;
 }
 
