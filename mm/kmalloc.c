@@ -28,15 +28,18 @@ void *kmalloc(size_t size){
             order++;
         }
 
+        void *mem = buddy_alloc(order);
+
         if (scheduler) spin_lock_irqrestore(&kmalloc_lock, rflags);
 
-        return buddy_alloc(order);
+        return mem;
     }
 
     for (int i = 0; i < NUM_CACHES; i++){
         if (size <= kernel_caches[i].obj_size){
+            void *mem = slab_alloc(&kernel_caches[i]);
             if (scheduler) spin_lock_irqrestore(&kmalloc_lock, rflags);
-            return slab_alloc(&kernel_caches[i]);
+            return mem;
         }
     }
 
@@ -47,8 +50,13 @@ void *kmalloc(size_t size){
 void kfree(void *ptr){
     if (!ptr) return;
 
+    uint64_t rflags;
+    if (scheduler) rflags = spin_lock_irqsave(&kmalloc_lock);
+
     int index = ((uint64_t)ptr - HEAP_START) / PAGE_SIZE_4KB;
     
     if (metadata[index].is_slab) slab_free(ptr);
     else buddy_free(ptr);
+    
+    if (scheduler) spin_lock_irqrestore(&kmalloc_lock, rflags);
 }
