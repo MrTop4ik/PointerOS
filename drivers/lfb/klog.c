@@ -8,7 +8,7 @@ static spinlock_t klog_write_lock = {0};
 static spinlock_t klog_read_lock = {0};
 
 void init_klog(void){
-    klog_buffer = (log_entry_t *)kmalloc(KLOG_BUF_SIZE);
+    klog_buffer = (log_entry_t *)kmalloc(KLOG_BUF_SIZE * sizeof(log_entry_t));
     if (!klog_buffer) for(;;);
 
     serial_print("[KLOG] Klog buffer at %llx\n", (uint64_t)klog_buffer);
