@@ -127,7 +127,7 @@ static int local_putnum(char *buf, uint32_t max_len, uint64_t num, uint32_t base
         num /= base;
     }
 
-    while (j > 0 && i < max_len) buf[j++] = temp[--i];
+    while (j > 0 && i < max_len) buf[i++] = temp[--j];
 
     return i;
 }
