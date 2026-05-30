@@ -32,11 +32,18 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     init_scheduler();
 
     init_PIT(10);
-    init_lapic_timer(0xEF, 50);
+    init_lapic_timer(0xEF, 1);
 
     sti();
 
     kprintf("[Thread 1] Hello, World!\n");
 
-    for (;;);
+    for (;;) kprintf("[Thread 1] Hello, World\n");;
 }
+
+/*[LDB] Back Buffer Address at ffffffffe0000000
+[KLOG] Klog buffer at ffffffffe0400000
+[THREAD] Thread Address at ffffffffe0401068
+[THREAD] Thread stack bottom at ffffffffe0402000
+[THREAD] Thread Address at ffffffffe04010a8
+[THREAD] Thread stack bottom at ffffffffe0403000*/

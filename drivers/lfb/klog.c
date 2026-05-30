@@ -11,6 +11,8 @@ void init_klog(void){
     klog_buffer = (log_entry_t *)kmalloc(KLOG_BUF_SIZE);
     if (!klog_buffer) for(;;);
 
+    serial_print("[KLOG] Klog buffer at %llx\n", (uint64_t)klog_buffer);
+
     for (int i = 0; i < 0; i ++){
         klog_buffer[i].c = 0;
         klog_buffer[i].ready = 0;

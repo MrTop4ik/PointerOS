@@ -16,6 +16,9 @@ thread_t *create_thread(void (*entry_point)(void), size_t stack_size){
         return NULL;
     }
 
+    serial_print("[THREAD] Thread Address at %llx\n", (uint64_t)t);
+    serial_print("[THREAD] Thread stack bottom at %llx\n", (uint64_t)stack_mem);
+
     t->stack_bottom = stack_mem;
 
     uint64_t *stack_top = (uint64_t*)((uint64_t)stack_mem + stack_size);

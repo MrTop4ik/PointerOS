@@ -23,7 +23,9 @@ void init_LFB(unsigned int physBootInfo){
 
     lfb.vram = (uint32_t *)LFB_ADDR;
     lfb.buffer = kmalloc(lfb.size);
-    
+
+    serial_print("[LDB] Back Buffer Address at %llx\n", (uint64_t)lfb.buffer);
+
     lfb.font = (uint8_t *)font8x16;
     lfb.char_width = 8;
     lfb.char_height = 16;
@@ -125,7 +127,7 @@ static int local_putnum(char *buf, uint32_t max_len, uint64_t num, uint32_t base
         num /= base;
     }
 
-    while (j > 0 && i < max_len) buf[j++] = temp[i--];
+    while (j > 0 && i < max_len) buf[j++] = temp[--i];
 
     return i;
 }
