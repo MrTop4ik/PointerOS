@@ -38,12 +38,5 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
 
     kprintf("[Thread 1] Hello, World!\n");
 
-    for (;;) kprintf("[Thread 1] Hello, World\n");;
+    for (;;);
 }
-
-/*[LDB] Back Buffer Address at ffffffffe0000000
-[KLOG] Klog buffer at ffffffffe0400000
-[THREAD] Thread Address at ffffffffe0401068
-[THREAD] Thread stack bottom at ffffffffe0402000
-[THREAD] Thread Address at ffffffffe04010a8
-[THREAD] Thread stack bottom at ffffffffe0403000*/
