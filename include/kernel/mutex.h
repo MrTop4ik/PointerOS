@@ -1,3 +1,4 @@
+#pragma once
 #include <stdint.h>
 #include <arch/x86_64/drivers/video/serial.h>
 #include <drivers/lfb.h>
