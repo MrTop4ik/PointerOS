@@ -10,6 +10,7 @@
 typedef enum {
     READY = 0,
     RUNNING,
+    BLOCKED,
     DEAD
 } thread_state_t;
 
@@ -20,6 +21,7 @@ typedef struct thread {
     void *stack_bottom;
     struct thread *prev;
     struct thread *next;
+    struct thread *next_blocked;
 } thread_t;
 
 extern uint64_t next_thread_id;
