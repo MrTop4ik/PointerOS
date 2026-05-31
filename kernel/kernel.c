@@ -12,6 +12,7 @@
 #include <arch/x86_64/apic/ioapic.h>
 #include <arch/x86_64/drivers/timers/lapic_timer.h>
 #include <kernel/scheduler/scheduler.h>
+#include <kernel/mutex.h>
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();

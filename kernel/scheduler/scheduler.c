@@ -23,16 +23,21 @@ uint64_t scheduler_handler(uint64_t old_rsp){
 
     thread_t *old_thread = current_thread;
 
+    thread_t *starting_point = old_thread->next;
+
     if (old_thread->state == DEAD){
         dequeue_thread(old_thread);
         old_thread->next = dead_list_head;
         dead_list_head = old_thread;
+    } else if (old_thread->state == BLOCKED){
+        old_thread->rsp = old_rsp;
+        dequeue_thread(old_thread);
     } else {
         old_thread->rsp = old_rsp;
         old_thread->state = READY;
     }
 
-    thread_t *starting_point = (old_thread->state == DEAD) ? ready_list_head : old_thread->next;
+    if (old_thread->state == DEAD || old_thread->state == BLOCKED) starting_point = ready_list_head;
     thread_t *next_thread = starting_point;
 
     if (!next_thread) return old_rsp;
@@ -40,7 +45,7 @@ uint64_t scheduler_handler(uint64_t old_rsp){
     while (next_thread->state != READY && next_thread->state != RUNNING){
         next_thread = next_thread->next;
         if (next_thread == starting_point){
-            if (old_thread->state == DEAD) for(;;);
+            if (old_thread->state == DEAD || old_thread->state == BLOCKED) for(;;);
             old_thread->state = RUNNING;
             return old_rsp;
         }
