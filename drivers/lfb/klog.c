@@ -8,7 +8,7 @@ static spinlock_t klog_write_lock = {0};
 static spinlock_t klog_read_lock = {0};
 
 void init_klog(void){
-    klog_buffer = (log_entry_t *)kmalloc(KLOG_BUF_SIZE * sizeof(log_entry_t));
+    klog_buffer = (log_entry_t *)kmalloc(KLOG_BUF_MAX * sizeof(log_entry_t));
     if (!klog_buffer) for(;;);
 
     serial_print("[KLOG] Klog buffer at %llx\n", (uint64_t)klog_buffer);
@@ -25,7 +25,7 @@ void init_klog(void){
 void klog_write(const char *s, size_t len){
     if (!klog_buffer || len == 0) return;
 
-    if (len > KLOG_BUF_SIZE) len = KLOG_BUF_SIZE;
+    if (len > KLOG_BUF_MAX) len = KLOG_BUF_MAX;
 
     uint64_t rflags = spin_lock_irqsave(&klog_write_lock);
     uint64_t start_head = klog_head;
@@ -50,8 +50,8 @@ void klog_flush_to_screen(void){
     while (1){
         uint64_t current_head = __atomic_load_n(&klog_head, __ATOMIC_ACQUIRE);
 
-        if ((current_head - klog_tail) > KLOG_BUF_SIZE){
-            klog_tail = current_head - KLOG_BUF_SIZE;
+        if ((current_head - klog_tail) > KLOG_BUF_MAX){
+            klog_tail = current_head - KLOG_BUF_MAX;
             kputchar_direct('['); kputchar_direct('d'); kputchar_direct('r'); kputchar_direct('o'); kputchar_direct('p'); kputchar_direct(']'); 
             printed = 1;
         }

@@ -9,8 +9,8 @@
 #include <mm/kmalloc.h>
 #include <drivers/lfb.h>
 
-#define KLOG_BUF_SIZE 4096
-#define KLOG_BUF_MASK (KLOG_BUF_SIZE - 1)
+#define KLOG_BUF_MAX 4096
+#define KLOG_BUF_MASK (KLOG_BUF_MAX - 1)
 
 typedef struct {
     char c;
