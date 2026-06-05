@@ -15,13 +15,13 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 - [x] **GDT:** Configured.
 - [x] **IDT:** Configured.
 - [x] **Paging:** 64-bit Paging Enabled.
-- [x] **Higher Half Kernel:** Implemeted.
+- [x] **Higher Half Kernel:** Implemented.
 - [x] **KMemory Allocation:**
     - **PMM** Implemented.
     - **VMM** Implemented.
     - **Buddy Allocator** Implemented.
     - **Slab Allocator** Implemented.
-    - **KMAlloc** Implemeted.
+    - **KMAlloc** Implemented.
     - **KFree** Implemented.
 - [x] **Drivers:** 
     - **LFB** Implemented.
@@ -30,6 +30,9 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
     - **LAPIC Timer** Implemented.
 - [x] **Scheduler:**
     - **Multithreading** Implemented.
+- [x] **Synchronization:**
+    - **Spinlock** Implemented.
+    - **Mutex** Implemented.
 ## Getting Started
 
 ### Prerequisites
