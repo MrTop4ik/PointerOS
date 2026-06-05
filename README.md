@@ -33,6 +33,9 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 - [x] **Synchronization:**
     - **Spinlock** Implemented.
     - **Mutex** Implemented.
+- [x] **Kernel Logging:**
+    - **KLog Buffer** Implemented.
+    - **Idle Thread Logging**
 ## Getting Started
 
 ### Prerequisites
