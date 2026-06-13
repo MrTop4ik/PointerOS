@@ -1,6 +1,5 @@
 #include <arch/x86_64/gdt.h>
 
-extern uint8_t stack_top;
 extern uint8_t ist1_stack_top;
 extern void gdt_flush(uint64_t);
 
@@ -18,8 +17,6 @@ void init_GDT(void){
     for (size_t i = 0; i < sizeof(struct TSS); i++){
         ((uint8_t*)&tss)[i] = 0;
     }
-
-    tss.rsp0 = (uint64_t)&stack_top + 0xFFFFFFFF80000000;
     
     tss.ist[0] = (uint64_t)&ist1_stack_top;
 
