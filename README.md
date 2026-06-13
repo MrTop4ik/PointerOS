@@ -10,6 +10,7 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 * **Build System:** Makefile, Linker scripts
 * **Emulation:** QEMU
 * **Bootloader:** GRUB (Multiboot2)
+* **Development Environment:** WSL2 Ubuntu
 
 ## Current Features
 - [x] **GDT:** Configured.
@@ -45,7 +46,7 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 | **Assembler** | `nasm` | Used for bootloader entry and interrupt stubs |
 | **Emulator** | `QEMU` | Run with `-machine q35` and `-bios OVMF.fd` |
 | **ISO Creation** | `grub-common` | Uses `grub-mkrescue` to build the bootable image |
-| **UEFI Support** | `grub-efi-amd64-bin` | Provides modules for `UEFI` booting and `ACPI 2.0` |
+| **UEFI Support** | `grub-efi-amd64-bin` | Provides modules for `UEFI` booting and `ACPI 2.0` (Debian/Ubuntu) |
 
 ### Build & Run
 ```bash
@@ -59,3 +60,23 @@ make iso
 # Run in QEMU
 make run
 ```
+
+## Potential Issues on Other Platforms
+Since the project is primarily built and tested under **WSL2 Ubuntu**, there may be differences or issues when running on other environments:
+
+- **Arch Linux:**  
+  - No separate `grub-efi-amd64-bin` package.  
+  - Currently there are **issues with booting on UEFI** that are being investigated and worked on.
+
+- **Pure Linux (non-WSL):**  
+  - QEMU options (`-bios OVMF.fd`, `-machine q35`) may differ depending on package versions.  
+  - Paths to `OVMF.fd` can vary between distros.
+
+
+- **Windows (without WSL2):**  
+  - Building with `nasm` and `x86_64-elf-gcc` requires a cross-toolchain setup (e.g., MSYS2 or Cygwin).  
+  - ISO creation with `grub-mkrescue` may not work out of the box.
+
+- **macOS:**  
+  - QEMU installation and EFI firmware paths differ.  
+  - GNU toolchain versions may cause incompatibilities.
