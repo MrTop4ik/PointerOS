@@ -25,6 +25,6 @@
 void init_VMM(unsigned int bootInfoAddr);
 void vmm_init_direct_mapping(uint64_t maxAddr);
 void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t ps, uint64_t flags);
-void vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr);
+uint64_t vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr);
 void *vmm_get_entry(uint64_t pml4_phys, uint64_t vaddr, int *level);
 void init_pat(void);

@@ -119,15 +119,23 @@ void vmm_map_page(uint64_t pml4_phys, uint64_t paddr, uint64_t vaddr, uint64_t p
     invalidate(vaddr);
 }
 
-void vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr){
+uint64_t vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr){
     int level;
     void *entry = vmm_get_entry(pml4_phys, vaddr, &level);
 
     if (entry){
+        uint64_t old_entry = *(uint64_t*)entry;
+        uint64_t paddr = old_entry & PAGE_MASK_4KB;
+
         *(uint64_t*)entry = 0;
         invalidate(vaddr);
+
+        return paddr;  
     }
+
+    return 0;
 }
+
 
 void *vmm_get_entry(uint64_t pml4_phys, uint64_t vaddr, int *level){
     uint64_t pml4_indx = (vaddr >> 39) & 0x1FF;

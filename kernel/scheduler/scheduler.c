@@ -7,7 +7,7 @@ void init_scheduler(void){
     main_thread->tid = 0;
     main_thread->state = RUNNING;
     main_thread->rsp = read_rsp();
-    main_thread->stack_bottom = NULL;
+    main_thread->kernel_stack.bottom = NULL;
 
     enqueue_thread(main_thread);
     current_thread = main_thread;

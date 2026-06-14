@@ -18,7 +18,8 @@ typedef struct thread {
     uint64_t rsp;
     uint64_t tid;
     thread_state_t state;
-    void *stack_bottom;
+    stack_t kernel_stack;
+    stack_t user_stack;
     struct thread *prev;
     struct thread *next;
     struct thread *next_blocked;
@@ -30,6 +31,7 @@ extern thread_t *ready_list_head;
 extern thread_t *dead_list_head;
 
 thread_t *create_thread(void (*entry_pointer)(void), size_t stack_size);
+thread_t *create_user_thread(void (*entry_point)(void), size_t kstack_t, size_t ustack_size);
 void destroy_thread(thread_t *t);
 void thread_exit(void);
 void enqueue_thread(thread_t *t);

@@ -3,6 +3,7 @@
 #include <multiboot2.h>
 #include <libc/string.h>
 #include <arch/x86_64/drivers/video/serial.h>
+#include <kernel/spinlock.h>
 
 #define KERNEL_OFFSET 0xFFFFFFFF80000000
 #define PAGE_SIZE_4KB 0x1000
@@ -13,3 +14,4 @@
 
 void init_PMM(unsigned int bootInfoAddr);
 uint64_t pmm_alloc_page(void);
+void pmm_free_page(uint64_t ptr);

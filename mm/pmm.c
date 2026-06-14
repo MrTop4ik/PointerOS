@@ -1,5 +1,7 @@
 #include <mm/pmm.h>
 
+static spinlock_t pmm_lock = {0};
+
 uint8_t* bitmap;
 uint64_t total_pages = 0;
 
@@ -60,12 +62,23 @@ void init_PMM(unsigned int bootInfoAddr){
 }
 
 uint64_t pmm_alloc_page(void){
+    uint64_t rfalgs = spin_lock_irqsave(&pmm_lock);
     for (uint64_t i = 0; i < total_pages; i++){
         if (!BITMAP_TEST(i)){
             BITMAP_SET(i);
+            spin_lock_irqrestore(&pmm_lock, rfalgs);
             return i * PAGE_SIZE_4KB;
         }
     }
-
+    
+    spin_lock_irqrestore(&pmm_lock, rfalgs);
     return 0;
+}
+
+void pmm_free_page(uint64_t paddr){
+    size_t bit = paddr / PAGE_SIZE_4KB;
+
+    if (bit >= total_pages) return;
+    else if (!BITMAP_TEST(bit)) return;
+    else BITMAP_CLR(bit);
 }

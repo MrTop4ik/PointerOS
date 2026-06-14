@@ -10,16 +10,17 @@ thread_t *create_thread(void (*entry_point)(void), size_t stack_size){
     thread_t *t = (thread_t *)kmalloc(sizeof(thread_t));
     if (!t) return NULL;
 
-    void *stack_mem = alloc_stack(stack_size);
+    void *stack_mem = kernel_alloc_stack(stack_size);
     if (!stack_mem){
         kfree(t);
         return NULL;
     }
 
-    serial_print("[THREAD] Thread Address at %llx\n", (uint64_t)t);
-    serial_print("[THREAD] Thread stack bottom at %llx\n", (uint64_t)stack_mem);
+    serial_print("[THREAD] Kernel Thread Address at %llx\n", (uint64_t)t);
+    serial_print("[THREAD] Kernel Thread Stack Bottom at %llx\n", (uint64_t)stack_mem);
 
-    t->stack_bottom = stack_mem;
+    t->kernel_stack.bottom = stack_mem;
+    t->kernel_stack.size = stack_size;
 
     uint64_t *stack_top = (uint64_t*)((uint64_t)stack_mem + stack_size);
     stack_top = (uint64_t*)((uint64_t)stack_top & ~15UL);
@@ -48,9 +49,64 @@ thread_t *create_thread(void (*entry_point)(void), size_t stack_size){
     return t;
 }
 
+thread_t *create_user_thread(void (*entry_point)(void), size_t kstack_size, size_t ustack_size){
+    thread_t *t = (thread_t *)kmalloc(sizeof(thread_t));
+    if (!t) return NULL;
+
+    void *kernel_stack_mem = kernel_alloc_stack(kstack_size);
+    if (!kernel_stack_mem){
+        kfree(t);
+        return NULL;
+    }
+
+    void *user_stack_mem = user_alloc_stack(ustack_size);
+    if (!user_stack_mem){
+        kfree(kernel_stack_mem);
+        kfree(t);
+        return NULL;
+    }
+
+    serial_print("[THREAD] User Thread Address at %llx\n", (uint64_t)t);
+    serial_print("[THREAD] User Thread Stack Bottom at %llx\n", (uint64_t)user_stack_mem);
+
+    t->kernel_stack.bottom = kernel_stack_mem;
+    t->kernel_stack.top = kernel_stack_mem + kstack_size;
+    t->kernel_stack.size = kstack_size;
+
+    t->user_stack.bottom = user_stack_mem;
+    t->user_stack.size = ustack_size;
+
+    uint64_t *stack_top = (uint64_t*)((uint64_t)user_stack_mem + ustack_size);
+    stack_top = (uint64_t*)((uint64_t)stack_top & ~15UL);
+
+    stack_top--; *stack_top = (uint64_t)&thread_exit;
+
+    uint64_t *clean_stack_top = stack_top;
+
+    stack_top--; *stack_top = 0x1B;
+    stack_top--; *stack_top = (uint64_t)clean_stack_top;
+    stack_top--; *stack_top = 0x202;
+    stack_top--; *stack_top = 0x23;
+    stack_top--; *stack_top = (uint64_t)entry_point;
+
+    for (int i = 0; i < 15; i++){
+        stack_top--; *stack_top = 0;
+    }
+
+    t->rsp = (uint64_t)stack_top;
+    t->tid = next_thread_id++;
+    t->state = READY;
+    t->next = NULL;
+    t->prev = NULL;
+
+    enqueue_thread(t);
+    return t;
+}
+
 void destroy_thread(thread_t *t){
     if (t){
-        if (t->stack_bottom) kfree(t->stack_bottom);
+        if (t->kernel_stack.bottom) kfree(t->kernel_stack.bottom);
+        if (t->user_stack.bottom) user_free_stack(t->user_stack.bottom, t->user_stack.size);
         kfree(t);
     }
 }
