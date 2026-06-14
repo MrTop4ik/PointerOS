@@ -37,6 +37,7 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 - [x] **Kernel Logging:**
     - **KLog Buffer** Implemented.
     - **Idle Thread Logging**
+- [ ] **Userspace:** In Progress.
 ## Getting Started
 
 ### Prerequisites
