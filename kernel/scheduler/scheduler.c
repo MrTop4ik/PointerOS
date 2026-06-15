@@ -55,5 +55,7 @@ uint64_t scheduler_handler(uint64_t old_rsp){
     next_thread->state = RUNNING;
     current_thread = next_thread;
 
+    tss.rsp0 = current_thread->kernel_stack.top;
+
     return next_thread->rsp;
 }

@@ -34,6 +34,8 @@ struct TSS {
     uint16_t iopb;
 }__attribute__((packed));
 
+extern struct TSS tss;
+
 void init_GDT(void);
 void setGDTGate(uint8_t vector, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags);
 void setTSSGate(uint8_t vector, uint64_t base, uint32_t limit);
