@@ -67,7 +67,8 @@ thread_t *create_user_thread(void (*entry_point)(void), size_t kstack_size, size
     }
 
     serial_print("[THREAD] User Thread Address at %llx\n", (uint64_t)t);
-    serial_print("[THREAD] User Thread Stack Bottom at %llx\n", (uint64_t)user_stack_mem);
+    serial_print("[THREAD] User Thread Kernel Stack Bottom at %llx\n", (uint64_t)user_stack_mem);
+    serial_print("[THREAD] User Thread User Stack Bottom at %llx\n", (uint64_t)user_stack_mem);
 
     t->kernel_stack.bottom = kernel_stack_mem;
     t->kernel_stack.top = kernel_stack_mem + kstack_size;
