@@ -3,9 +3,10 @@
 static spinlock_t kmalloc_lock = {0};
 
 void init_kheap(void){
-    for (uint64_t vaddr = HEAP_START; vaddr < HEAP_START + HEAP_SIZE; vaddr += PAGE_SIZE_4KB){
-        uint64_t paddr = pmm_alloc_page();
-        vmm_map_page(read_cr3(), paddr, vaddr, PAGE_SIZE_4KB, (PTE_PRESENT | PTE_WRITABLE));
+    uint64_t paddr = pmm_alloc_pages(HEAP_SIZE / PAGE_SIZE_4KB);
+
+    for (int i = 0; i < HEAP_SIZE / PAGE_SIZE_4KB; i++){
+        vmm_map_page(read_cr3(), paddr + i * PAGE_SIZE_4KB, HEAP_START + i * PAGE_SIZE_4KB, PAGE_SIZE_4KB, (PTE_PRESENT | PTE_WRITABLE));
     }
 
     init_buddy();
