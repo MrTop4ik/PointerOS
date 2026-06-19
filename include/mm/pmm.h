@@ -14,4 +14,5 @@
 
 void init_PMM(unsigned int bootInfoAddr);
 uint64_t pmm_alloc_page(void);
+uint64_t pmm_alloc_pages(int pages_count);
 void pmm_free_page(uint64_t ptr);

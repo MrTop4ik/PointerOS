@@ -75,6 +75,32 @@ uint64_t pmm_alloc_page(void){
     return 0;
 }
 
+uint64_t pmm_alloc_pages(int pages_count){
+    if (!pages_count) return 0;
+    if (pages_count > total_pages) return 0;
+
+    for (int i = 0; i <= total_pages; i++){
+        if (BITMAP_TEST(i)) continue;
+
+        int found = 1;
+        for (uint64_t j = 1; j < pages_count; j++){
+            if (BITMAP_TEST(i + j)){
+                found = 0;
+
+                i += j;
+                break;
+            }
+        }
+
+        if (found){
+            for (uint64_t j = 0; j < pages_count; j++) BITMAP_SET(i + j);
+            return i * PAGE_SIZE_4KB;
+        }
+    }
+
+    return 0;
+}
+
 void pmm_free_page(uint64_t paddr){
     size_t bit = paddr / PAGE_SIZE_4KB;
 
