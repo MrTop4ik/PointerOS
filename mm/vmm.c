@@ -136,7 +136,6 @@ uint64_t vmm_unmap_page(uint64_t pml4_phys, uint64_t vaddr){
     return 0;
 }
 
-
 void *vmm_get_entry(uint64_t pml4_phys, uint64_t vaddr, int *level){
     uint64_t pml4_indx = (vaddr >> 39) & 0x1FF;
     uint64_t pdpt_indx = (vaddr >> 30) & 0x1FF;

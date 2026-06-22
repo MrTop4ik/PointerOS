@@ -33,7 +33,23 @@ void *vmalloc(size_t size){
     return i->base;
 }
 
-void vfree(void *ptr);
+void vfree(void *ptr){
+    vm_info_t *current = vmalloc_list_head;
+    while (1){
+        if ((uint64_t)current->base == (uint64_t)ptr){
+            for (int i = 0; i < current->size; i += PAGE_SIZE_4KB){
+                uint64_t paddr = vmm_unmap_page(read_cr3(), (uint64_t)current->base + i);
+                pmm_free_page(paddr);
+            }
+            vm_remove_from_list(current);
+            return;
+        }
+
+        if (!current->next) return;
+
+        current = current->next;
+    }
+}
 
 void vm_add_to_list(vm_info_t *i){
     if (vmalloc_list_head){
