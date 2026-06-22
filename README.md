@@ -25,7 +25,7 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
     - **KMAlloc** Implemented.
     - **KFree** Implemented.
     - **VMalloc** Implemented.
-    - **VFree** In Progress.
+    - **VFree** Implemented.
 - [x] **Drivers:** 
     - **LFB** Implemented.
     - **QEMU Serial** Implemented.
