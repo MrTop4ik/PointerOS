@@ -21,6 +21,7 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/buddy.c									-o buddy.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/slab.c									-o slab.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/kmalloc.c									-o kmalloc.o
+	x86_64-elf-gcc		$(CFLAGS)		-c mm/vmalloc.c									-o vmalloc.o
 	x86_64-elf-gcc		$(CFLAGS)		-c mm/stack.c									-o stack.o
 	x86_64-elf-gcc		$(CFLAGS)		-c arch/x86_64/apic/acpi.c						-o acpi.o
 	x86_64-elf-gcc 		$(CFLAGS)		-c arch/x86_64/apic/lapic.c						-o lapic.o
@@ -31,7 +32,7 @@ iso:
 	x86_64-elf-gcc		$(CFLAGS)		-c kernel/spinlock.c							-o spinlock.o
 	x86_64-elf-gcc		$(CFLAGS)		-c drivers/lfb/klog.c							-o klog.o
 	x86_64-elf-gcc		$(CFLAGS)		-c kernel/mutex.c								-o mutex.o
-	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o lapic_timer.o lapic_timers.o thread.o yield.o scheduler.o stack.o spinlock.o klog.o mutex.o
+	x86_64-elf-gcc -T arch/x86_64/boot/linker.ld -o kernel.bin -ffreestanding -O2 -nostdlib -lgcc boot.o kernel.o inlineasm.o serial.o gdt.o gdts.o idt.o idts.o pit.o string.o pmm.o vmm.o lfb.o kmalloc.o buddy.o slab.o acpi.o lapic.o ioapic.o lapic_timer.o lapic_timers.o thread.o yield.o scheduler.o stack.o spinlock.o klog.o mutex.o vmalloc.o
 	grub-file --is-x86-multiboot2 kernel.bin
 	mv kernel.bin isodir/boot/kernel.bin
 	grub-mkrescue -o kernel.iso isodir

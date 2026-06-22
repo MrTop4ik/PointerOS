@@ -4,9 +4,9 @@ volatile int scheduler = 0;
 
 void init_scheduler(void){
     thread_t *main_thread = (thread_t *)kmalloc(sizeof(thread_t));
-    main_thread->tid = 0;
+    main_thread->tid = next_thread_id++;
     main_thread->state = RUNNING;
-    main_thread->rsp = read_rsp();
+    main_thread->rsp = 0;
     main_thread->kernel_stack.bottom = NULL;
 
     enqueue_thread(main_thread);

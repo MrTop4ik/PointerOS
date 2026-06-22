@@ -114,6 +114,7 @@ void destroy_thread(thread_t *t){
 
 void thread_exit(void){
     cli();
+    serial_print("[THREAD %d] Done\n", current_thread->tid);
     current_thread->state = DEAD;
     yield();
 }
@@ -166,5 +167,5 @@ void idle_thread_entry(void){
 }
 
 void third_thread(void){
-    for (int i = 0; i < 5; i++) kprintf("[Thread 3] World, Hello!\n");
+    
 }

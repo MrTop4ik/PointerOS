@@ -84,7 +84,7 @@ Since the project is primarily built and tested under **WSL2 Ubuntu**, there may
   - QEMU installation and EFI firmware paths differ.  
   - GNU toolchain versions may cause incompatibilities.
 
-## Current Issues.
+## Current Issues
 - **KLog:**
   - Sometimes it doesn't printing to screen and sometimes printing.
 - **Booting on Archlinux**
