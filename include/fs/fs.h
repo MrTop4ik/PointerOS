@@ -9,8 +9,8 @@
 typedef struct {
     uint32_t type;
     uint32_t size;
-    uint32_t start;
-    uint32_t end;
+    uint64_t start;
+    uint64_t end;
 } ramdisk_t;
 
 extern ramdisk_t ramdisk;

@@ -82,6 +82,9 @@ mkdir logs
 # Compile and create ISO image
 make iso
 
+# Create disk image
+make disk
+
 # Run in QEMU
 make run
 ```
