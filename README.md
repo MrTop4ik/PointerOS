@@ -60,6 +60,7 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 ---
 ## Getting Started
 
+### Prerequisites
 | **Category** | **Tool** | **Notes** |
 | :--- | :--- | :--- |
 | **Cross-Compiler** | `x86_64-elf-gcc` | Requires `-mno-red-zone` flag |
@@ -67,6 +68,7 @@ A hobby operating system kernel written from scratch in **C** and **x86 Assembly
 | **Emulator** | `QEMU` | Run with `-machine q35` & `OVMF` |
 | **ISO Tools** | `grub-common` | Uses `grub-mkrescue` |
 | **UEFI Support** | `OVMF` | Provides `ACPI 2.0` runtime modules |
+| **FS Support** | `DFS` | Provides DFS support |
 
 ### Build & Run
 ```bash

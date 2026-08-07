@@ -106,6 +106,14 @@ struct multiboot_tag_new_acpi {
     uint8_t rsdp[0];
 }__attribute__((packed));
 
+struct multiboot_tag_module {
+    uint32_t type;
+    uint32_t size;
+    uint32_t mod_start;
+    uint32_t mod_end;
+    char cmdline[];
+}__attribute__((packed));
+
 struct multiboot_info {
     uint32_t total_size;
     uint32_t reserved;
