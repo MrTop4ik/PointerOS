@@ -1,6 +1,6 @@
-#include <fs/vfs.h>
+#include <fs/fs.h>
 
-vfs_ops_t dfs_ops;
+vfs_ops_t dfs_ops = {.read = dfs_read, .finddir = dfs_finddir};
 
 vfs_node_t *mount_ramdisk(void){
     if (!check_dfs()){

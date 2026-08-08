@@ -15,7 +15,7 @@
 #include <kernel/mutex.h>
 #include <mm/vmalloc.h>
 #include <arch/x86_64/syscalls.h>
-#include <fs/vfs.h>
+#include <fs/fs.h>
 
 void kernel_main(uint64_t magic, unsigned int physBootInfo){
     serial_init();
@@ -40,8 +40,8 @@ void kernel_main(uint64_t magic, unsigned int physBootInfo){
     init_syscalls();
 
     parse_ramdisk(physBootInfo);
-    mount_ramdisk();
-
+    vfs_node_t *root = mount_ramdisk();
+    
     sti();
 
     for (;;);
